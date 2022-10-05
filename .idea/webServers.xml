@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="bba0fe15-817b-4843-9d9a-f5fb693d65ce" name="debian">
+        <fileTransfer rootFolder="/home/dxq" accessType="SFTP" host="10.112.49.187" port="22" sshConfigId="1b33d7b4-ea04-485b-9b84-47719b4112eb" sshConfig="dxq@10.112.49.187:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
