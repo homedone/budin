@@ -11,6 +11,7 @@
     <modules>
         <module>budin-file-service</module>
         <module>budin-common-utils</module>
+        <module>budin-entity</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -32,6 +33,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.7</version>
         </dependency>
     </dependencies>
 

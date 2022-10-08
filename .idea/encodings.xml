@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/../../maven/mymaven/org/springframework/boot/spring-boot-starter-parent/2.3.12.RELEASE/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-common-utils/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/budin-entity/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-file-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-file-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />

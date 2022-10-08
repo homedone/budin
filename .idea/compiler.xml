@@ -8,12 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="budin-common-utils" />
         <module name="budin-file-service" />
+        <module name="budin-entity" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="budin-common-utils" options="-parameters" />
+      <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />
     </option>
   </component>
