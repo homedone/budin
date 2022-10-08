@@ -13,6 +13,17 @@ public class BudinFile {
 
     private String uuid;
 
+
+
+    public BudinFile(Integer id, String fileName, String fileOriginalName, String fileSuffix, String fileUrl, String uuid) {
+        this.id = id;
+        this.fileName = fileName;
+        this.fileOriginalName = fileOriginalName;
+        this.fileSuffix = fileSuffix;
+        this.fileUrl = fileUrl;
+        this.uuid = uuid;
+    }
+
     public Integer getId() {
         return id;
     }
