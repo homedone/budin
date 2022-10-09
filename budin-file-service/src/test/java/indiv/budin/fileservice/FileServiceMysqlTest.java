@@ -1,5 +1,6 @@
 package indiv.budin.fileservice;
 
+import indi.budin.fileservice.FileServiceApplication;
 import indi.budin.fileservice.service.api.FileService;
 import indiv.budin.entity.po.BudinFile;
 import indiv.budin.mapper.BudinFileMapper;
@@ -16,7 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = FileServiceApplication.class)
 public class FileServiceMysqlTest {
     @Autowired
     private DataSource dataSource;
@@ -30,7 +31,7 @@ public class FileServiceMysqlTest {
     }
     @Test
     public void mybatisTest(){
-        BudinFile budinFile=new BudinFile(1,"file","ofile","txt","/storage","123");
+        BudinFile budinFile=new BudinFile(2,"filess","ofiless","txt","/storage","123");
         budinFileMapper.insertSelective(budinFile);
     }
 }

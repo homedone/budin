@@ -4,13 +4,13 @@ spring:
   application:
     name: budin-file-service
   datasource:
-    name: database
+    name: debian-budin
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://10.112.49.187:3306/budin?serverTimezone=GMT%2B8&amp;characterEncoding=utf-8
+    url: jdbc:mysql://10.112.49.187:3306/budin?serverTimezone=GMT%2B8&characterEncoding=utf-8
     username: dxq
     password: dxq-py36
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 
 mybatis:
-  mapper-locations: classpath*:mybatis/mapper/*Mapper*.xml
+  mapper-locations: classpath*:indiv/budin/mapper/*Mapper*.xml
