@@ -22,6 +22,11 @@
             <artifactId>budin-entity</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>8.4.0</version>
+        </dependency>
     </dependencies>
 
 </project>
