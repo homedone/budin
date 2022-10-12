@@ -90,14 +90,23 @@ public class OSSUtil {
         return null;
     }
 
+    /**
+     *
+     * @param bucketName
+     * @param dirPathName
+     * @discript 新建空文件或者空文件目录,文件目录则以"/"结尾
+     */
     public boolean createDirectory(String bucketName, String dirPathName) throws InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        if (checkFolderIsExist(bucketName, dirPathName)) {
+        try {
+            PutObjectArgs putObjectArgs = PutObjectArgs.builder().bucket(bucketName).object(dirPathName).stream(
+                            new ByteArrayInputStream(new byte[]{}), 0, -1)
+                    .build();
+            minioClient.putObject(putObjectArgs);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
             return false;
         }
-        PutObjectArgs.builder().bucket(bucketName).object(dirPathName).stream(
-                        new ByteArrayInputStream(new byte[]{}), 0, -1)
-                .build();
-        return true;
     }
 
     /**
@@ -109,7 +118,7 @@ public class OSSUtil {
      */
     public Boolean checkFileIsExist(String bucketName, String objectName) {
         try {
-            StatObjectResponse statObjectResponse = minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
+            minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
 
         } catch (Exception e) {
             return false;
@@ -144,7 +153,6 @@ public class OSSUtil {
 
     /**
      * 文件上传
-     *
      * @param file 文件
      * @return message
      */
