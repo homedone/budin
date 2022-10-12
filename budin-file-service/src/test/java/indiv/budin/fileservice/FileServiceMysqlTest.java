@@ -1,7 +1,5 @@
 package indiv.budin.fileservice;
 
-import indi.budin.fileservice.FileServiceApplication;
-import indi.budin.fileservice.service.api.FileService;
 import indiv.budin.entity.po.BudinFile;
 import indiv.budin.mapper.BudinFileMapper;
 import org.junit.Test;

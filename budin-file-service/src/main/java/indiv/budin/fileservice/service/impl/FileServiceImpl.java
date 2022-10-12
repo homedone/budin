@@ -1,6 +1,6 @@
-package indi.budin.fileservice.service.impl;
+package indiv.budin.fileservice.service.impl;
 
-import indi.budin.fileservice.service.api.FileService;
+import indiv.budin.fileservice.service.api.FileService;
 import org.springframework.stereotype.Service;
 
 /**

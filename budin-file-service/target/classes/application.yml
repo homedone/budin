@@ -10,7 +10,12 @@ spring:
     username: dxq
     password: dxq-py36
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+minio:
+  endpoint: http://10.112.49.187:9110 #Minio服务所在地址
+  bucketName: none
+  bucketDomain: none
+  accessKey: minio-dxq #访问的key
+  secretKey: dxq-py36
 
 mybatis:
   mapper-locations: classpath*:indiv/budin/mapper/*Mapper*.xml

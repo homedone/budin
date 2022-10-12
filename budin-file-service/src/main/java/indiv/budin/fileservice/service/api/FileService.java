@@ -1,4 +1,4 @@
-package indi.budin.fileservice.service.api;
+package indiv.budin.fileservice.service.api;
 
 
 /**
