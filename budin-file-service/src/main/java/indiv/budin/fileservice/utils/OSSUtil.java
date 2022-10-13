@@ -91,10 +91,9 @@ public class OSSUtil {
     }
 
     /**
-     *
      * @param bucketName
      * @param dirPathName
-     * @discript 新建空文件或者空文件目录,文件目录则以"/"结尾
+     * @discript 新建空文件或者空目录, 文件目录则以"/"结尾
      */
     public boolean createDirectory(String bucketName, String dirPathName) throws InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         try {
@@ -103,7 +102,7 @@ public class OSSUtil {
                     .build();
             minioClient.putObject(putObjectArgs);
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -112,6 +111,7 @@ public class OSSUtil {
     /**
      * 判断文件是否存在
      * 暂时不能使用，不能根据异常判断是否存在
+     *
      * @param bucketName 桶名称
      * @param objectName 文件名称, 如果要带文件夹请用 / 分割, 例如 /help/index.html
      * @return true存在, 反之
@@ -141,23 +141,36 @@ public class OSSUtil {
                             .build());
             for (Result<Item> result : results) {
                 Item item = result.get();
-                if (item.isDir() && folderName.equals(item.objectName())) {
+                if (item.objectName() == null) continue;
+                String name = item.objectName();
+                if (name.charAt(name.length() - 1) == '/' && (folderName.equals(name) || folderName.equals(name.substring(0, name.length() - 1)))) {
                     return true;
                 }
             }
+            return false;
         } catch (Exception e) {
             return false;
         }
-        return true;
     }
 
     /**
      * 文件上传
+     *
      * @param file 文件
      * @return message
      */
     public String upload(MultipartFile file, String bucketName, String dirPathName, String fileFullName) {
         String objectName = dirPathName + fileFullName;
+        return upload(file,bucketName,objectName);
+    }
+
+    /**
+     * 文件上传
+     *
+     * @param file 文件
+     * @return message
+     */
+    public String upload(MultipartFile file, String bucketName, String objectName) {
         try {
             PutObjectArgs objectArgs = PutObjectArgs.builder().bucket(bucketName).object(objectName)
                     .stream(file.getInputStream(), file.getSize(), -1).contentType(file.getContentType()).build();
@@ -217,13 +230,13 @@ public class OSSUtil {
     }
 
     /**
-     * 查看文件对象
+     * 查看桶内信息
      *
      * @return 存储bucket内文件对象信息
      */
-    public List<Item> listObjects() {
+    public List<Item> listObjects(String buketName) {
         Iterable<Result<Item>> results = minioClient.listObjects(
-                ListObjectsArgs.builder().bucket(minioConfig.getBucketName()).build());
+                ListObjectsArgs.builder().bucket(buketName).build());
         List<Item> items = new ArrayList<>();
         try {
             for (Result<Item> result : results) {
@@ -237,7 +250,7 @@ public class OSSUtil {
     }
 
     /**
-     * 删除
+     * 删除文件或文件夹
      *
      * @param fileName
      * @return

@@ -2,6 +2,7 @@ package indiv.budin.fileservice;
 
 import indiv.budin.fileservice.utils.OSSUtil;
 import io.minio.messages.Bucket;
+import io.minio.messages.Item;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -29,29 +30,54 @@ public class OssUtilTest {
         else
             logger.info("oss已经存在");
     }
+
     //test ok
     @Test
-    public void  getAllBucketTest(){
+    public void getAllBucketTest() {
         List<Bucket> allBuckets = ossUtil.getAllBuckets();
-        for(Bucket bucket:allBuckets){
+        for (Bucket bucket : allBuckets) {
             logger.info(bucket.name());
         }
     }
+
     //test ok
     @Test
-    public void createDirectoryTest(){
+    public void createDirectoryTest() {
         try {
             boolean res = ossUtil.createDirectory("budin-oss1", "dxq");
             logger.info(Boolean.toString(res));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     //test ok
     @Test
-    public void previewTest(){
+    public void previewTest() {
         String url = ossUtil.preview("budin-oss1", "dxq");
         logger.info(url);
+    }
+
+    //test ok
+    @Test
+    public void checkFolderIsExistTest() {
+        boolean res = ossUtil.checkFolderIsExist("budin-oss1", "dxq/");
+        logger.info(Boolean.toString(res));
+    }
+
+    //test ok
+    @Test
+    public void listObjectsTest() {
+        for (Item listObject : ossUtil.listObjects("budin-oss1")) {
+            logger.info(listObject.objectName());
+        }
+    }
+
+    //test ok
+    @Test
+    public void removeTest() {
+        boolean res = ossUtil.remove("budin-oss1", "dxq/");
+        logger.info(Boolean.toString(res));
     }
 
 }
