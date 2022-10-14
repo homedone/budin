@@ -161,7 +161,7 @@ public class OSSUtil {
      */
     public String upload(MultipartFile file, String bucketName, String dirPathName, String fileFullName) {
         String objectName = dirPathName + fileFullName;
-        return upload(file,bucketName,objectName);
+        return upload(file, bucketName, objectName);
     }
 
     /**

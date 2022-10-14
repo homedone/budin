@@ -22,14 +22,17 @@ public class FileServiceMysqlTest {
     public Logger logger = LoggerFactory.getLogger(FileServiceMysqlTest.class);
     @Autowired
     private BudinFileMapper budinFileMapper;
+
     @Test
     public void test() throws SQLException {
         Connection connection = dataSource.getConnection();
         logger.debug(connection.toString());
     }
+
     @Test
-    public void mybatisTest(){
-        BudinFile budinFile=new BudinFile(2,"filess","ofiless","txt","/storage","123");
-        budinFileMapper.insertSelective(budinFile);
+    public void mybatisTest() {
+        BudinFile budinFile = new BudinFile(null, "filess", "ofiless", "txt", "/storage", "122");
+        int res = budinFileMapper.insertSelective(budinFile);
+        logger.debug(Integer.toString(res));
     }
 }
