@@ -224,7 +224,7 @@ export default {
 }
 
 .name {
-  color: #3143ab;
+  color: #4b49c9;
   font-size: 20px;
   letter-spacing: 4px;
   font-weight: bold;
