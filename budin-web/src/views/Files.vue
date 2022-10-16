@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import FunctionBar from "@/components/functionBar/FunctionBar.vue";
-import IconTypeList from "@/components/iconTypeList/IconTypeList.vue";
+import FunctionBar from "@/components/bars/FunctionBar.vue";
+import IconTypeList from "@/components/list/IconTypeList.vue";
 export default {
   name: "Files",
   data() {

@@ -1,6 +1,6 @@
 <script setup>
 import TheWelcome from './components/TheWelcome.vue'
-import Portal from './components/Portal.vue'
+import Portal from './views/Portal.vue'
 import Files from '@/views/Files.vue'
 import Login from '@/views/Login.vue'
 import Collectes from '@/views/Collectes.vue'
@@ -9,11 +9,16 @@ import Albums from '@/views/Albums.vue'
 
 <template>
   <!-- <Portal/> -->
-  <Files/>
-  <main>
-    <TheWelcome />
-  </main>
+  <!-- <head><Files/></head> -->
+  <div id="app">
+    <router-view></router-view>
+  </div>
 </template>
 
 <style scoped>
 </style>
+<script>
+export default {
+  name: "App",
+};
+</script>

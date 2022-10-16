@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { handleTime } from "@/src/components/plugins/utils.js";
+import { handleTime } from "@/plugins/utils.js";
 
 export default {
   name: "MusicPlayer",

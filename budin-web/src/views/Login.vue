@@ -3,7 +3,7 @@
     <div class="main">
       <div class="logoContainer">
         <div class="logo"><img src="@/assets/img/logo.png" alt="" /></div>
-        <div class="name">小破盘</div>
+        <div class="name">BUDIN</div>
       </div>
       <div
         class="mainBox"
@@ -224,7 +224,7 @@ export default {
 }
 
 .name {
-  color: #25262b;
+  color: #3143ab;
   font-size: 20px;
   letter-spacing: 4px;
   font-weight: bold;

@@ -28,13 +28,13 @@
 </template>
 
 <script>
-import IconTypeList from "../iconTypeList/IconTypeList.vue";
+import IconTypeList from "../list/IconTypeList.vue";
 
 export default {
   name: "FolderDialog",
-  components: {
-    IconTypeList,
-  },
+  // components: {
+  //   IconTypeList,
+  // },
   props: {
     isFolderDialogShow: {
       type: Boolean,

@@ -19,7 +19,7 @@ import {
     Image,
     Tooltip,
     Tree,
-} from 'element-ui'
+} from 'element-plus'
 
 Vue.use(Container);
 Vue.use(Aside);

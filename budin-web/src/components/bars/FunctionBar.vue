@@ -136,7 +136,7 @@
 </template>
 
 <script>
-import ProgressDialog from "../progressDialog/ProgressDialog.vue";
+import ProgressDialog from "@/components/dialog//ProgressDialog.vue";
 export default {
   name: "FunctionBar",
   components: {

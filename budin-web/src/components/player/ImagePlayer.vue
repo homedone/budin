@@ -32,7 +32,7 @@
         @click="$emit('collectCurrentImg', { flag: true, item: currentImg })"
       ></i>
       <img
-        src="~assets/img/collect.png"
+        src="@/assets/img/collect.png"
         alt=""
         @click="$emit('collectCurrentImg', { flag: false, item: currentImg })"
         v-else-if="currentImg.collection == 1"

@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import AlbumList from "@/components/albumList/AlbumList.vue";
-import AlbumNavBar from "@/components/albumNavBar/AlbumNavBar.vue";
+import AlbumList from "@/components/list/AlbumList.vue";
+import AlbumNavBar from "@/components/bars/AlbumNavBar.vue";
 export default {
   components: { AlbumNavBar, AlbumList },
   name: "Album",
