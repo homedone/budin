@@ -8,8 +8,6 @@ import Albums from '@/views/Albums.vue'
 </script>
 
 <template>
-  <!-- <Portal/> -->
-  <!-- <head><Files/></head> -->
   <div id="app">
     <router-view></router-view>
   </div>

@@ -13,7 +13,7 @@ const Login = () => import('@/views/Login.vue')
 
 const routes = [
   { path: '/', redirect: '/index' },
-  // { path: '/files', component:Files },
+  { path: '/files', component:Files },
   // {
   //   path: '/index',
   //   component: Index,

@@ -119,7 +119,7 @@ export default {
     //   点击登录的回调
     async onSubmit() {
       let res = await this.$request(
-        "/educenter/member/login",
+        "/budin/member/login",
         this.login,
         "post",
         "params"
