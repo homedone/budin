@@ -3,10 +3,10 @@
     <div class="FunctionBar">
       <div class="left">
         <el-upload
-          multiple
-          
+          multiple     
+          :action="'/api/test'"
           class="uploadButton"
-          action="http://localhost:3020/api/test"
+
           :show-file-list="false"
           :on-success="upload"
           :on-error="onError"
@@ -182,51 +182,53 @@ export default {
     // 上传成功的钩子
     async upload(response, file) {
       console.log("upload");
-      // if (!response.success) {
-      //   this.$message.error("上传失败,请稍后重试!");
-      //   // this.isUploadProgressShow = false;
-      //   let arr = this.$store.state.uploadProgressList;
-      //   let idx = arr.findIndex((item) => item.name == file.name);
-      //   arr.splice(idx, 1);
-      //   this.$store.commit("updateUploadProgressList", arr);
-      //   return;
-      // }
-      // let data = {
-      //   memId: this.$store.state.userInfo.id,
-      //   url: response.data.file.url,
-      //   name: response.data.file.name,
-      //   type: response.data.file.type,
-      //   videoId: response.data.file.videoId,
-      //   filetype: response.data.file.filetype,
-      //   fdir: response.data.file.fdir,
-      //   size: response.data.file.size,
-      // };
+      if (!response.success) {
+        this.$message.error("上传失败,请稍后重试!");
+        // this.isUploadProgressShow = false;
+        // let arr = this.$store.state.uploadProgressList;
+        // let idx = arr.findIndex((item) => item.name == file.name);
+        // arr.splice(idx, 1);
+        // this.$store.commit("updateUploadProgressList", arr);
+        return;
+      }else{
+        this.$message.success("连接成功!");
+      }
+      let data = {
+        // memId: this.$store.state.userInfo.id,
+        // url: response.data.file.url,
+        // name: response.data.file.name,
+        // type: response.data.file.type,
+        // videoId: response.data.file.videoId,
+        // filetype: response.data.file.filetype,
+        // fdir: response.data.file.fdir,
+        // size: response.data.file.size,
+      };
       // // 调用此接口以通知后端将上传的文件存入数据库
-      // let res = await this.$request(
-      //   "/educenter/file/addFile",
-      //   data,
-      //   "post",
-      //   "params"
-      // );
-      // console.log(res);
+      let res = await this.$request(
+        "/file/addFile",
+        data,
+        "post",
+        "params",
+      );
+      console.log(res);
       // // this.isUploadProgressShow = false;
       // let arr = this.$store.state.uploadProgressList;
       // let idx = arr.findIndex((item) => item.name == file.name);
       // arr.splice(idx, 1);
       // this.$store.commit("updateUploadProgressList", arr);
 
-      // if (res.data.success) {
-      //   this.$message.success("文件上传成功!");
-      //   // this.$emit("getListData");
-      //   this.$emit("pushUploadData", res.data.data.file);
+      if (res.data.success) {
+        this.$message.success("文件上传成功!");
+        // this.$emit("getListData");
+        // this.$emit("pushUploadData", res.data.data.file);
 
-      //   // 更新用户存储空间
-      //   let userInfo = this.$store.state.userInfo;
-      //   userInfo.neicun += response.data.file.size;
-      //   this.$store.commit("updateUserInfo", userInfo);
-      // } else {
-      //   this.$message.error("文件上传失败，请稍后重试!");
-      // }
+        // // 更新用户存储空间
+        // let userInfo = this.$store.state.userInfo;
+        // userInfo.neicun += response.data.file.size;
+        // this.$store.commit("updateUserInfo", userInfo);
+      } else {
+        this.$message.error("文件上传失败，请稍后重试!");
+      }
     },
 
     // 上传失败的钩子

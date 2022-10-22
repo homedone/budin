@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -20,10 +21,11 @@ public class FileServiceController {
     public String portal() {
         return "index.html";
     }
-    @RequestMapping("/api/test")
-    public String test(){
+    @RequestMapping("/test")
+    @ResponseBody
+    public ResultUtil<String> test(){
         logger.info("shoudao");
-        return "Ok";
+        return ResultUtil.successWithData("shoudao");
     }
 
     @RequestMapping("/api/download")
@@ -31,7 +33,8 @@ public class FileServiceController {
         return ResultUtil.fail();
     }
 
-    @RequestMapping("/api/upload")
+    @RequestMapping("/file/upload")
+    @ResponseBody
     public ResultUtil<String> upload(@RequestParam String fileName, @RequestParam MultipartFile multipartFile) {
         //do something
         return ResultUtil.fail();

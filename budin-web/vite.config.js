@@ -16,5 +16,13 @@ export default defineConfig({
     port: 3010,
     // 是否开启 https
     https: false,
+    proxy:{
+      '/api': {
+        target: 'http://localhost:3020',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      } 
+    }
   }
+ 
 })
