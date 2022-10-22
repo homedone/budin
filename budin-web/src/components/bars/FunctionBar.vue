@@ -6,6 +6,7 @@
           multiple
           
           class="uploadButton"
+          action="http://localhost:3020/api/test"
           :show-file-list="false"
           :on-success="upload"
           :on-error="onError"
@@ -180,7 +181,7 @@ export default {
 
     // 上传成功的钩子
     async upload(response, file) {
-      // console.log(response);
+      console.log("upload");
       // if (!response.success) {
       //   this.$message.error("上传失败,请稍后重试!");
       //   // this.isUploadProgressShow = false;
@@ -252,6 +253,7 @@ export default {
           return 1;
         }
       });
+      console.log("onprogress");
       this.$store.commit("updateUploadProgressList", arr);
     },
 

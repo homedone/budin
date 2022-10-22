@@ -3,6 +3,8 @@ package indiv.budin.fileservice.controller;
 
 import indiv.budin.common.utils.ResultUtil;
 import io.minio.MinioClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,9 +15,15 @@ import javax.annotation.Resource;
 
 @Controller
 public class FileServiceController {
+    public Logger logger = LoggerFactory.getLogger(FileServiceController.class);
     @RequestMapping("/")
     public String portal() {
         return "index.html";
+    }
+    @RequestMapping("/api/test")
+    public String test(){
+        logger.info("shoudao");
+        return "Ok";
     }
 
     @RequestMapping("/api/download")
