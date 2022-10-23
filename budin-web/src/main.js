@@ -5,11 +5,9 @@ import store from './store/index'
 import  {request}  from './plugins/network';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css'
-// import axios from 'axios';
-// axios.defaults.baseURL = '/api'
 
 const app = createApp(App)
-app.config.globalProperties.$axios = request
+app.config.globalProperties.$request = request
 app.use(router)
 app.use(store)
 app.use(ElementPlus)

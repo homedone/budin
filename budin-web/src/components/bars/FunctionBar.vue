@@ -4,7 +4,7 @@
       <div class="left">
         <el-upload
           multiple     
-          :action="'/api/test'"
+          :action="'/api/file/upload'"
           class="uploadButton"
 
           :show-file-list="false"
@@ -194,6 +194,7 @@ export default {
         this.$message.success("连接成功!");
       }
       let data = {
+        fileName:"newfile",
         // memId: this.$store.state.userInfo.id,
         // url: response.data.file.url,
         // name: response.data.file.name,
@@ -205,10 +206,11 @@ export default {
       };
       // // 调用此接口以通知后端将上传的文件存入数据库
       let res = await this.$request(
-        "/file/addFile",
+        "/file/add/",
         data,
         "post",
-        "params",
+        "params"
+        
       );
       console.log(res);
       // // this.isUploadProgressShow = false;
