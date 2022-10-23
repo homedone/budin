@@ -21,6 +21,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -127,7 +128,7 @@ public class OSSUtil {
     }
 
     /**
-     * @param folderName 文件夹名称
+     * @param folderName 文件夹名称 格式”xxx“ 或者”xxx/“
      * @return
      */
     public boolean checkFolderIsExist(String bucketName, String folderName) {
@@ -139,6 +140,7 @@ public class OSSUtil {
                             .prefix(folderName)
                             .recursive(false)
                             .build());
+            if ("".equals(folderName) || "/".equals(folderName)) return true;
             for (Result<Item> result : results) {
                 Item item = result.get();
                 if (item.objectName() == null) continue;
@@ -156,24 +158,24 @@ public class OSSUtil {
     /**
      * 文件上传
      *
-     * @param file 文件
+     * @param
      * @return message
      */
-    public String upload(MultipartFile file, String bucketName, String dirPathName, String fileFullName) {
+    public String upload(String bucketName, String dirPathName,String fileFullName , InputStream inputStream ,long size,String contentType) {
         String objectName = dirPathName + fileFullName;
-        return upload(file, bucketName, objectName);
+        return upload(bucketName, objectName,inputStream,size,contentType);
     }
 
     /**
      * 文件上传
      *
-     * @param file 文件
+     * @param
      * @return message
      */
-    public String upload(MultipartFile file, String bucketName, String objectName) {
+    public String upload(String bucketName, String objectName , InputStream inputStream ,long size,String contentType) {
         try {
             PutObjectArgs objectArgs = PutObjectArgs.builder().bucket(bucketName).object(objectName)
-                    .stream(file.getInputStream(), file.getSize(), -1).contentType(file.getContentType()).build();
+                    .stream(inputStream, size, -1).contentType(contentType).build();
             //文件名称相同会覆盖
             minioClient.putObject(objectArgs);
         } catch (Exception e) {

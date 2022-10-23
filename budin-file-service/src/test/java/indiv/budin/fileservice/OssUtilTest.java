@@ -44,7 +44,7 @@ public class OssUtilTest {
     @Test
     public void createDirectoryTest() {
         try {
-            boolean res = ossUtil.createDirectory("budin-oss1", "dxq");
+            boolean res = ossUtil.createDirectory("budin-oss1", "dxq/");
             logger.info(Boolean.toString(res));
         } catch (Exception e) {
             e.printStackTrace();
@@ -61,7 +61,7 @@ public class OssUtilTest {
     //test ok
     @Test
     public void checkFolderIsExistTest() {
-        boolean res = ossUtil.checkFolderIsExist("budin-oss1", "dxq/");
+        boolean res = ossUtil.checkFolderIsExist("budin-oss1", "/");
         logger.info(Boolean.toString(res));
     }
 

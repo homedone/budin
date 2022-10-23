@@ -1,5 +1,6 @@
 package indiv.budin.fileservice;
 
+import indiv.budin.common.utils.UuidUtil;
 import indiv.budin.entity.po.BudinFile;
 import indiv.budin.mapper.BudinFileMapper;
 import org.junit.Test;
@@ -13,6 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = FileServiceApplication.class)
@@ -34,5 +37,11 @@ public class FileServiceMysqlTest {
         BudinFile budinFile = new BudinFile(null, "filess", "ofiless", "txt", "/storage", "122");
         int res = budinFileMapper.insertSelective(budinFile);
         logger.debug(Integer.toString(res));
+    }
+    @Test
+    public void uuid(){
+        String uuid=UuidUtil.makeUuid();
+        String fileName = new SimpleDateFormat("yyyyMMdd").format(new Date()) + uuid;
+        logger.info(fileName);
     }
 }

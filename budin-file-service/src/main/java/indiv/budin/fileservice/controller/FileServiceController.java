@@ -1,7 +1,13 @@
 package indiv.budin.fileservice.controller;
 
 
+import indiv.budin.common.constants.FileServiceCode;
+import indiv.budin.common.constants.FileServiceConstant;
+import indiv.budin.common.utils.FileUtil;
 import indiv.budin.common.utils.ResultUtil;
+import indiv.budin.common.utils.UuidUtil;
+import indiv.budin.fileservice.service.api.FileService;
+import indiv.budin.fileservice.utils.OSSUtil;
 import io.minio.MinioClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +20,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 @Controller
 public class FileServiceController {
     public Logger logger = LoggerFactory.getLogger(FileServiceController.class);
+
+    @Autowired
+    private OSSUtil ossUtil;
+
+    @Autowired
+    private FileService fileService;
 
     @RequestMapping("/")
     public String portal() {
@@ -26,15 +41,35 @@ public class FileServiceController {
 
     @RequestMapping("/file/upload")
     @ResponseBody
-    public ResultUtil<String> upload(MultipartFile multipartFile) {
-        logger.info(multipartFile.toString());
-        logger.info(multipartFile.getName());
-        logger.info(String.valueOf(multipartFile.getSize()));
-        return ResultUtil.successWithData("shoudao");
+    public ResultUtil<String> fileUpload(@RequestParam("file") MultipartFile multipartFile) {
+        String fileOriginalName = multipartFile.getOriginalFilename();
+        String uuid = UuidUtil.makeUuid();
+        String fileName = new SimpleDateFormat("yyyyMMdd").format(new Date()) + uuid;
+        String fileSuffix = fileOriginalName.substring(fileOriginalName.lastIndexOf("."));
+        //获取用户bucket，当前文件路径
+        String bucketName = "budin-oss1";
+        String dirName = "/";
+        String objectName = dirName + fileName + fileSuffix;
+        long fileSize = multipartFile.getSize();
+        if (fileSize > FileServiceConstant.MAX_FILE_SIZE * FileUtil.getUnit(FileServiceConstant.FILE_UINT))
+            return ResultUtil.failWithExMessage(FileServiceCode.FILE_OVER_SIZE);
+        try {
+            if (!ossUtil.bucketExists(bucketName) || !ossUtil.checkFolderIsExist(bucketName, dirName))
+                return ResultUtil.failWithExMessage(FileServiceCode.PATH_NAME_ERROR);
+            String result = ossUtil.upload(bucketName, objectName, multipartFile.getInputStream(), fileSize, multipartFile.getContentType());
+            if (result == null) return ResultUtil.fail();
+
+            //存入数据库
+            return ResultUtil.successWithData(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.failWithExMessage(FileServiceCode.SYSTEM_ERROR);
+        }
     }
 
+
     @RequestMapping("/file/download")
-    public ResultUtil<String> download(@RequestParam("fileName") String fileName) {
+    public ResultUtil<String> fileDownload(@RequestParam("fileName") String fileName) {
         return ResultUtil.fail();
     }
 

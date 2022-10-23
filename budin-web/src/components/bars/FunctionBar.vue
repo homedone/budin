@@ -181,20 +181,20 @@ export default {
 
     // 上传成功的钩子
     async upload(response, file) {
-      console.log("upload");
+      console.log(response);
       if (!response.success) {
-        this.$message.error("上传失败,请稍后重试!");
-        // this.isUploadProgressShow = false;
-        // let arr = this.$store.state.uploadProgressList;
-        // let idx = arr.findIndex((item) => item.name == file.name);
-        // arr.splice(idx, 1);
-        // this.$store.commit("updateUploadProgressList", arr);
+        this.$message.error(response.message);
+        this.isUploadProgressShow = false;
+        let arr = this.$store.state.uploadProgressList;
+        let idx = arr.findIndex((item) => item.name == file.name);
+        arr.splice(idx, 1);
+        this.$store.commit("updateUploadProgressList", arr);
         return;
       }else{
-        this.$message.success("连接成功!");
+        this.$message.success(response.message);
       }
-      let data = {
-        fileName:"newfile",
+      // let data = {
+      //   fileName:"newfile",
         // memId: this.$store.state.userInfo.id,
         // url: response.data.file.url,
         // name: response.data.file.name,
@@ -203,24 +203,24 @@ export default {
         // filetype: response.data.file.filetype,
         // fdir: response.data.file.fdir,
         // size: response.data.file.size,
-      };
+      // };
       // // 调用此接口以通知后端将上传的文件存入数据库
-      let res = await this.$request(
-        "/file/add/",
-        data,
-        "post",
-        "params"
+      // let res = await this.$request(
+      //   "/add/file",
+      //   data,
+      //   "post",
+      //   "params"
         
-      );
-      console.log(res);
+      // );
+      // console.log(res);
       // // this.isUploadProgressShow = false;
       // let arr = this.$store.state.uploadProgressList;
       // let idx = arr.findIndex((item) => item.name == file.name);
       // arr.splice(idx, 1);
       // this.$store.commit("updateUploadProgressList", arr);
 
-      if (res.data.success) {
-        this.$message.success("文件上传成功!");
+      // if (res.data.success) {
+      //   this.$message.success("文件上传成功!");
         // this.$emit("getListData");
         // this.$emit("pushUploadData", res.data.data.file);
 
@@ -228,9 +228,9 @@ export default {
         // let userInfo = this.$store.state.userInfo;
         // userInfo.neicun += response.data.file.size;
         // this.$store.commit("updateUserInfo", userInfo);
-      } else {
-        this.$message.error("文件上传失败，请稍后重试!");
-      }
+      // } else {
+      //   this.$message.error("文件上传失败，请稍后重试!");
+      // }
     },
 
     // 上传失败的钩子
@@ -246,7 +246,7 @@ export default {
 
     // 文件上传时的钩子
     onProgress(e, file) {
-      // console.log(e, file);
+      console.log(e, file);
       // this.isUploadProgressShow = true;
       // this.uploadProgress = Math.round(file.percentage);
       // console.log(this.uploadProgress);
@@ -263,7 +263,6 @@ export default {
 
     // 文件上传之前的钩子
     beforeUpload(file) {
-      console.log(file);
       let arr = this.$store.state.uploadProgressList;
       arr.push({ name: file.name, progress: 0 });
       this.$store.commit("updateUploadProgressList", arr);

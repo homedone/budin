@@ -48,6 +48,10 @@ public class ResultUtil<T> implements Serializable {
         return new ResultUtil<>(CommonCode.FAIL, null);
     }
 
+    public static <Type> ResultUtil<Type> failWithExMessage(ResultCode resultCode) {
+        return new ResultUtil<>(resultCode, null);
+    }
+
     public Integer getCode() {
         return code;
     }

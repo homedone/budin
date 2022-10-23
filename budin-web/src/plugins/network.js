@@ -27,7 +27,16 @@ export function request(url, params, method, type, header) {
                             'Content-Type': 'application/json;charset=UTF-8'
                         },
                     })
-                } else if (type == 'paramsSerializer') {
+                }else if(header == 'formdata'){
+                    return instance.request({
+                        url,
+                        data: params,
+                        method: 'post',
+                        headers: {
+                            'Content-Type': 'multipart/form-data;charset=UTF-8'
+                        },
+                    })
+                }else if (type == 'paramsSerializer') {
                     return instance.request({
                         url,
                         data: qs.stringify(params, { arrayFormat: 'repeat' }),

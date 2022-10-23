@@ -10,6 +10,10 @@ spring:
     username: dxq
     password: dxq-py36
     driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 500MB
 minio:
   endpoint: http://10.112.49.187:9110 #Minio服务所在地址
   bucketName: none

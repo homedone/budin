@@ -11,6 +11,11 @@ import java.util.Queue;
  * 文件上传下载工具类
  */
 public class FileUtil {
-    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+    public static long getUnit(String unit) {
+        if ("MB".equals(unit)) return 1024 * 1024;
+        if ("GB".equals(unit)) return 1024 * 1024 * 1024;
+        if ("KB".equals(unit)) return 1024;
+        return 1024;
+    }
 
 }
