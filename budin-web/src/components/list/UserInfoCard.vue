@@ -14,7 +14,7 @@
 
     <div class="avatar">
       <img :src="userInfo.avatar" alt="" v-if="userInfo.avatar" />
-      <img src="~assets/img/avatar.png" alt="" v-else />
+      <img src="@/assets/img/avatar.png" alt="" v-else />
     </div>
     <div class="userName">{{ userInfo.nickname }}</div>
     <div class="menuContainer">

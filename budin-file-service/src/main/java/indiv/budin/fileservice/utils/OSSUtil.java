@@ -128,24 +128,27 @@ public class OSSUtil {
     }
 
     /**
-     * @param folderName 文件夹名称 格式”xxx“ 或者”xxx/“
+     * @param folderPath 文件夹名称 格式”xxx“ 或者”xxx/“
      * @return
      */
-    public boolean checkFolderIsExist(String bucketName, String folderName) {
+    public boolean checkFolderIsExist(String bucketName, String folderPath) {
         try {
             Iterable<Result<Item>> results = minioClient.listObjects(
                     ListObjectsArgs
                             .builder()
                             .bucket(bucketName)
-                            .prefix(folderName)
+                            .prefix(folderPath)
                             .recursive(false)
                             .build());
-            if ("".equals(folderName) || "/".equals(folderName)) return true;
+            if ("".equals(folderPath) || "/".equals(folderPath)) return true;
             for (Result<Item> result : results) {
                 Item item = result.get();
                 if (item.objectName() == null) continue;
                 String name = item.objectName();
-                if (name.charAt(name.length() - 1) == '/' && (folderName.equals(name) || folderName.equals(name.substring(0, name.length() - 1)))) {
+                if (name.charAt(name.length() - 1) == '/' &&
+                        (folderPath.equals(name) || folderPath.equals(name.substring(0, name.length() - 1))
+                                || name.equals(folderPath.substring(1,folderPath.length()))
+                        || folderPath.substring(1,folderPath.length()).equals(name.substring(0, name.length() - 1)))) {
                     return true;
                 }
             }

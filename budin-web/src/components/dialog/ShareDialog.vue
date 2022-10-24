@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    custom-class="shareDialog"
+    class="shareDialog"
     :title="'分享文件: ' + shareItem.name + '.' + shareItem.type"
     :visible.sync="isShow"
     @close="

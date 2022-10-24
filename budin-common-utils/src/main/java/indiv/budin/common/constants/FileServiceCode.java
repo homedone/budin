@@ -5,7 +5,8 @@ import indiv.budin.common.utif.ResultCode;
 public enum FileServiceCode implements ResultCode {
     PATH_NAME_ERROR(false, 4010, "路径错误"),
     SYSTEM_ERROR(false, 3010, "系统异常"),
-    FILE_OVER_SIZE(false, 4011, "文件太大了,不能超出" + FileServiceConstant.MAX_FILE_SIZE + FileServiceConstant.FILE_UINT);
+    FILE_OVER_SIZE(false, 4011, "文件太大了,不能超出" + FileServiceConstant.MAX_FILE_SIZE + FileServiceConstant.FILE_UINT),
+    FOLDER_EXIST(false, 4012, "文件夹已经存在");
     private final boolean status;
     /**
      * 状态码

@@ -13,18 +13,18 @@ const Login = () => import('@/views/Login.vue')
 
 const routes = [
   { path: '/', redirect: '/index' },
-  { path: '/files', component:Files },
-  // {
-  //   path: '/index',
-  //   component: Index,
-  //   redirect: '/files/%2Froot',
-  //   children: [
-  //     { path: '/files', redirect: '/files/%2Froot' },
-  //     { path: '/files/:path', name: 'files', component: Files },
-  //     { path: '/albums', component: Albums },
-  //     { path: '/collectes', component: Collectes },
-  //   ]
-  // },
+  // { path: '/files', component:Files },
+  {
+    path: '/index',
+    component: Index,
+    redirect: '/files/%2Froot',
+    children: [
+      { path: '/files', redirect: '/files/%2Froot' },
+      { path: '/files/:path', name: 'files', component: Files },
+      { path: '/albums', component: Albums },
+      { path: '/collectes', component: Collectes },
+    ]
+  },
   { path: '/login', component: Login },
 ]
 

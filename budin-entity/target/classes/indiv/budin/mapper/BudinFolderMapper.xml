@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="indiv.budin.mapper.BudinFolderMapper">
+  <resultMap id="BaseResultMap" type="indiv.budin.entity.po.BudinFolder">
+    <id column="folder_id" jdbcType="INTEGER" property="folderId" />
+    <result column="folder_original_name" jdbcType="VARCHAR" property="folderOriginalName" />
+    <result column="folder_name" jdbcType="VARCHAR" property="folderName" />
+    <result column="folder_path" jdbcType="VARCHAR" property="folderPath" />
+    <result column="folder_url" jdbcType="VARCHAR" property="folderUrl" />
+    <result column="folder_uuid" jdbcType="VARCHAR" property="folderUuid" />
+    <result column="folder_size" jdbcType="BIGINT" property="folderSize" />
+    <result column="folder_build_time" jdbcType="TIMESTAMP" property="folderBuildTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    folder_id, folder_original_name, folder_name, folder_path, folder_url, folder_uuid, 
+    folder_size, folder_build_time
+  </sql>
+  <select id="selectByExample" parameterType="indiv.budin.entity.po.BudinFolderExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from budin_folder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from budin_folder
+    where folder_id = #{folderId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from budin_folder
+    where folder_id = #{folderId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="indiv.budin.entity.po.BudinFolderExample">
+    delete from budin_folder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="indiv.budin.entity.po.BudinFolder">
+    insert into budin_folder (folder_id, folder_original_name, folder_name, 
+      folder_path, folder_url, folder_uuid, 
+      folder_size, folder_build_time)
+    values (#{folderId,jdbcType=INTEGER}, #{folderOriginalName,jdbcType=VARCHAR}, #{folderName,jdbcType=VARCHAR}, 
+      #{folderPath,jdbcType=VARCHAR}, #{folderUrl,jdbcType=VARCHAR}, #{folderUuid,jdbcType=VARCHAR}, 
+      #{folderSize,jdbcType=BIGINT}, #{folderBuildTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="indiv.budin.entity.po.BudinFolder">
+    insert into budin_folder
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="folderId != null">
+        folder_id,
+      </if>
+      <if test="folderOriginalName != null">
+        folder_original_name,
+      </if>
+      <if test="folderName != null">
+        folder_name,
+      </if>
+      <if test="folderPath != null">
+        folder_path,
+      </if>
+      <if test="folderUrl != null">
+        folder_url,
+      </if>
+      <if test="folderUuid != null">
+        folder_uuid,
+      </if>
+      <if test="folderSize != null">
+        folder_size,
+      </if>
+      <if test="folderBuildTime != null">
+        folder_build_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="folderId != null">
+        #{folderId,jdbcType=INTEGER},
+      </if>
+      <if test="folderOriginalName != null">
+        #{folderOriginalName,jdbcType=VARCHAR},
+      </if>
+      <if test="folderName != null">
+        #{folderName,jdbcType=VARCHAR},
+      </if>
+      <if test="folderPath != null">
+        #{folderPath,jdbcType=VARCHAR},
+      </if>
+      <if test="folderUrl != null">
+        #{folderUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="folderUuid != null">
+        #{folderUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="folderSize != null">
+        #{folderSize,jdbcType=BIGINT},
+      </if>
+      <if test="folderBuildTime != null">
+        #{folderBuildTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="indiv.budin.entity.po.BudinFolderExample" resultType="java.lang.Long">
+    select count(*) from budin_folder
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update budin_folder
+    <set>
+      <if test="record.folderId != null">
+        folder_id = #{record.folderId,jdbcType=INTEGER},
+      </if>
+      <if test="record.folderOriginalName != null">
+        folder_original_name = #{record.folderOriginalName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.folderName != null">
+        folder_name = #{record.folderName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.folderPath != null">
+        folder_path = #{record.folderPath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.folderUrl != null">
+        folder_url = #{record.folderUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.folderUuid != null">
+        folder_uuid = #{record.folderUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.folderSize != null">
+        folder_size = #{record.folderSize,jdbcType=BIGINT},
+      </if>
+      <if test="record.folderBuildTime != null">
+        folder_build_time = #{record.folderBuildTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update budin_folder
+    set folder_id = #{record.folderId,jdbcType=INTEGER},
+      folder_original_name = #{record.folderOriginalName,jdbcType=VARCHAR},
+      folder_name = #{record.folderName,jdbcType=VARCHAR},
+      folder_path = #{record.folderPath,jdbcType=VARCHAR},
+      folder_url = #{record.folderUrl,jdbcType=VARCHAR},
+      folder_uuid = #{record.folderUuid,jdbcType=VARCHAR},
+      folder_size = #{record.folderSize,jdbcType=BIGINT},
+      folder_build_time = #{record.folderBuildTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="indiv.budin.entity.po.BudinFolder">
+    update budin_folder
+    <set>
+      <if test="folderOriginalName != null">
+        folder_original_name = #{folderOriginalName,jdbcType=VARCHAR},
+      </if>
+      <if test="folderName != null">
+        folder_name = #{folderName,jdbcType=VARCHAR},
+      </if>
+      <if test="folderPath != null">
+        folder_path = #{folderPath,jdbcType=VARCHAR},
+      </if>
+      <if test="folderUrl != null">
+        folder_url = #{folderUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="folderUuid != null">
+        folder_uuid = #{folderUuid,jdbcType=VARCHAR},
+      </if>
+      <if test="folderSize != null">
+        folder_size = #{folderSize,jdbcType=BIGINT},
+      </if>
+      <if test="folderBuildTime != null">
+        folder_build_time = #{folderBuildTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where folder_id = #{folderId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="indiv.budin.entity.po.BudinFolder">
+    update budin_folder
+    set folder_original_name = #{folderOriginalName,jdbcType=VARCHAR},
+      folder_name = #{folderName,jdbcType=VARCHAR},
+      folder_path = #{folderPath,jdbcType=VARCHAR},
+      folder_url = #{folderUrl,jdbcType=VARCHAR},
+      folder_uuid = #{folderUuid,jdbcType=VARCHAR},
+      folder_size = #{folderSize,jdbcType=BIGINT},
+      folder_build_time = #{folderBuildTime,jdbcType=TIMESTAMP}
+    where folder_id = #{folderId,jdbcType=INTEGER}
+  </update>
+</mapper>

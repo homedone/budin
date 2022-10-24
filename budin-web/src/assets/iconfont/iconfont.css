@@ -1,0 +1,127 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3726720 */
+  src: url('iconfont.woff2?t=1666618264876') format('woff2'),
+       url('iconfont.woff?t=1666618264876') format('woff'),
+       url('iconfont.ttf?t=1666618264876') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-budin-cloud-download:before {
+  content: "\e604";
+}
+
+.icon-budin-cloud-upload:before {
+  content: "\e605";
+}
+
+.icon-budin-ellipsis:before {
+  content: "\e606";
+}
+
+.icon-budin-edit:before {
+  content: "\e607";
+}
+
+.icon-budin-file:before {
+  content: "\e608";
+}
+
+.icon-budin-file-add:before {
+  content: "\e609";
+}
+
+.icon-budin-file-image:before {
+  content: "\e60a";
+}
+
+.icon-budin-file-powerpoint:before {
+  content: "\e60b";
+}
+
+.icon-budin-file-icon:before {
+  content: "\e60c";
+}
+
+.icon-budin-file-unknown:before {
+  content: "\e60d";
+}
+
+.icon-budin-file-word:before {
+  content: "\e60e";
+}
+
+.icon-budin-folder-add:before {
+  content: "\e60f";
+}
+
+.icon-budin-folder:before {
+  content: "\e610";
+}
+
+.icon-budin-format-vertical-align-left:before {
+  content: "\e611";
+}
+
+.icon-budin-file-excel:before {
+  content: "\e612";
+}
+
+.icon-budin-file-pdf:before {
+  content: "\e613";
+}
+
+.icon-budin-fullsreen:before {
+  content: "\e614";
+}
+
+.icon-budin-forward:before {
+  content: "\e615";
+}
+
+.icon-budin-heart-filled:before {
+  content: "\e616";
+}
+
+.icon-budin-heart:before {
+  content: "\e617";
+}
+
+.icon-budin-fullscreen-exit:before {
+  content: "\e618";
+}
+
+.icon-budin-image:before {
+  content: "\e619";
+}
+
+.icon-budin-home:before {
+  content: "\e61a";
+}
+
+.icon-budin-lock-off:before {
+  content: "\e61b";
+}
+
+.icon-budin-link:before {
+  content: "\e61c";
+}
+
+.icon-budin-lock-on:before {
+  content: "\e61d";
+}
+
+.icon-budin-logout:before {
+  content: "\e61e";
+}
+
+.icon-budin-login:before {
+  content: "\e61f";
+}
+

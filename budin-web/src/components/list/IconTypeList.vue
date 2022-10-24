@@ -681,10 +681,15 @@ export default {
             this.$store.commit("updateIsCreateFolder", false);
           } else {
             // 发送请求给服务器
+            let data={
+              folderPath:"/",
+              folderOriginalName:this.createdName,
+            }
             let res = await this.$request(
-              `/educenter/dir/setUserDir/${this.$store.state.userInfo.id}/${this.createdName}/${this.currentFolderId}`,
-              "",
-              "post"
+              "/build/folder",
+               data,
+              "post",
+              "params"
             );
             console.log(res);
             //   重新加载组件
@@ -693,8 +698,8 @@ export default {
               this.$store.commit("updateIsGetingFolder", true);
             } else {
               this.$message.error(res.data.message);
-              this.createdName = "";
               this.$store.commit("updateIsCreateFolder", false);
+              this.createdName = "";
             }
           }
         }

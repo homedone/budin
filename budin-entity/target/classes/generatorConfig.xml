@@ -49,7 +49,9 @@
 
 
         <!-- 列出要生成代码的所有表，这里配置的是不生成Example文件 -->
-        <table tableName="budin_file" domainObjectName="BudinFile"></table>
+<!--        <table tableName="budin_folder" domainObjectName="BudinFolder"></table>-->
+<!--        <table tableName="budin_relation_folder_file" domainObjectName="RelationFolderFile"></table>-->
+        <table tableName="budin_relation_between_folder" domainObjectName="RelationBetweenFolder"></table>
 
     </context>
 </generatorConfiguration>

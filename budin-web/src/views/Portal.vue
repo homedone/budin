@@ -34,17 +34,17 @@
 import axios from "axios";
 
 import AsideBar from "@/components/bars/AsideBar.vue";
-// import UserInfoCard from "components/userInfoCard/UserInfoCard.vue";
+import UserInfoCard from "@/components/list/UserInfoCard.vue";
 import VideoPlayer from "@/components/player/VideoPlayer.vue";
-// import MusicPlayer from "@/components/player/MusicPlayer.vue";
+import MusicPlayer from "@/components/player/MusicPlayer.vue";
 import ProgressDialog from "@/components/dialog/ProgressDialog.vue";
 export default {
   components: {
     AsideBar,
-    // UserInfoCard,
-    // VideoPlayer,
-    // MusicPlayer,
-    // ProgressDialog,
+    UserInfoCard,
+    VideoPlayer,
+    MusicPlayer,
+    ProgressDialog,
   },
   name: "Index",
   data() {
