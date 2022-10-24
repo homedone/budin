@@ -12,6 +12,7 @@
         <module>budin-file-service</module>
         <module>budin-common-utils</module>
         <module>budin-entity</module>
+        <module>budin-member-center</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

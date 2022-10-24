@@ -9,6 +9,7 @@
         <module name="budin-common-utils" />
         <module name="budin-file-service" />
         <module name="budin-entity" />
+        <module name="budin-member" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8" />
@@ -18,6 +19,7 @@
       <module name="budin-common-utils" options="-parameters" />
       <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />
+      <module name="budin-member" options="-parameters" />
     </option>
   </component>
 </project>
