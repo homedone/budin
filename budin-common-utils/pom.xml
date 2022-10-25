@@ -11,11 +11,8 @@
 
     <artifactId>budin-common-utils</artifactId>
     <dependencies>
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>8.4.0</version>
-        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+
     </dependencies>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

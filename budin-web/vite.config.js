@@ -17,12 +17,18 @@ export default defineConfig({
     // 是否开启 https
     https: false,
     proxy:{
-      '/api': {
+      '/api/file': {
         target: 'http://localhost:3020',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/api/center': {
+        target: 'http://localhost:3030',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       } 
-    }
+    },
+   
   }
  
 })

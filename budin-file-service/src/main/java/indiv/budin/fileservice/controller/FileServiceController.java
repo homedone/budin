@@ -66,7 +66,7 @@ public class FileServiceController {
         }
     }
 
-    @RequestMapping(value = "/build/folder")
+    @RequestMapping(value = "/file/build/folder")
     @ResponseBody
     public ResultUtil<String> buildFolder(@RequestBody BudinFolderVO budinFolderVO) {
         //获取用户bucket，当前目录
@@ -89,12 +89,7 @@ public class FileServiceController {
         return ResultUtil.fail();
     }
 
-    @RequestMapping("/add/file")
-    @ResponseBody
-    public ResultUtil<String> addFile() {
-        //do something
 
-        return ResultUtil.fail();
-    }
+
 
 }

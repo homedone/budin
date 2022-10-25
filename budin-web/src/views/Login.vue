@@ -20,8 +20,8 @@
               <el-form ref="form" :model="login" label-width="80px">
                 <el-form-item>
                   <el-input
-                    v-model="login.mobile"
-                    placeholder="请输入手机号码"
+                    v-model="login.account"
+                    placeholder="请输入账户/手机号码"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -98,7 +98,7 @@ export default {
   data() {
     return {
       login: {
-        mobile: "",
+        account: "",
         password: "",
       },
       registered: {
@@ -119,10 +119,11 @@ export default {
     //   点击登录的回调
     async onSubmit() {
       let res = await this.$request(
-        "/budin/member/login",
+        "/center/user/login",
         this.login,
         "post",
-        "params"
+        "params",
+        "formdata"
       );
       console.log(res);
       if (res.status == 200 && res.data.success) {

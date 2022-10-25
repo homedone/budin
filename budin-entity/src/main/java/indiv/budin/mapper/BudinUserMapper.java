@@ -27,4 +27,6 @@ public interface BudinUserMapper {
     int updateByPrimaryKeySelective(BudinUser record);
 
     int updateByPrimaryKey(BudinUser record);
+
+    BudinUser getUserByAccount( String account);
 }

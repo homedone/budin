@@ -686,7 +686,7 @@ export default {
               folderOriginalName:this.createdName,
             }
             let res = await this.$request(
-              "/build/folder",
+              "/file/build/folder",
                data,
               "post",
               "params"
