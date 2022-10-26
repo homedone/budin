@@ -4,7 +4,9 @@ import indiv.budin.common.utif.ResultCode;
 
 public enum CommonCode implements ResultCode {
     SUCCESS(true, 1000, "成功!"),
-    FAIL(false, 4000, "失败");
+    FAIL(false, 4000, "失败"),
+
+    SYSTEM_ERROR(false, 3000, "系统异常");
 
     /**
      * 状态

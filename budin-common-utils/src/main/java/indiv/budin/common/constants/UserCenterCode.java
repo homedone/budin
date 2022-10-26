@@ -2,11 +2,16 @@ package indiv.budin.common.constants;
 
 import indiv.budin.common.utif.ResultCode;
 
-public enum FileServiceCode implements ResultCode {
-    PATH_NAME_ERROR(false, 4010, "路径错误"),
-    SYSTEM_ERROR(false, 3010, "文件系统异常"),
-    FILE_OVER_SIZE(false, 4011, "文件太大了,不能超出" + FileServiceConstant.MAX_FILE_SIZE + FileServiceConstant.FILE_UINT),
-    FOLDER_EXIST(false, 4012, "文件夹已经存在");
+/**
+ * @author
+ * @date 2022/10/26 10 11
+ * discription
+ */
+public enum UserCenterCode implements ResultCode {
+    SYSTEM_ERROR(false, 3020, "用户系统异常"),
+    ACCOUNT_OR_PASSWORD_ERROR(false,2010,"用户名或密码有误"),
+    BUDIN_STORAGE_ERROR(false,2020,"云盘信息有误");
+
     private final boolean status;
     /**
      * 状态码
@@ -17,11 +22,12 @@ public enum FileServiceCode implements ResultCode {
      */
     private final String message;
 
-    FileServiceCode(boolean status, int code, String message) {
+    UserCenterCode(boolean status, int code, String message) {
         this.status = status;
         this.code = code;
         this.message = message;
     }
+
 
     @Override
     public boolean isSuccess() {

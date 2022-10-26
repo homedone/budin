@@ -19,7 +19,7 @@ const store=new Vuex.Store({
     // 音频播放状态
     musicPlayState: false,
     // 用户信息
-    userInfo: JSON.parse(window.localStorage.getItem("userInfo")),
+    // userInfo: JSON.parse(window.localStorage.getItem("userInfo")),
     // 当前所在的目录
     currentFolder: '',
     // 该用户的目录树

@@ -110,12 +110,14 @@ export default {
 
     // 请求用户信息
     async getUserInfo() {
-      let res = await this.$request(
-        `/educenter/member/getMemberInfo/${this.$store.state.userInfo.id}`
-      );
-      // console.log(res);
-      this.userInfo = res.data.data.member;
-      this.$store.commit("updateUserInfo", this.userInfo);
+      console.log("why?");
+      console.log(this.$store.state.userInfo);
+      // let res = await this.$request(
+      //   `/educenter/member/getMemberInfo/${this.$store.state.userInfo.userAccount}`
+      // );
+      // // console.log(res);
+      // this.userInfo = res.data.data.member;
+      // this.$store.commit("updateUserInfo", this.userInfo);
     },
 
     // 上传成功的钩子
@@ -205,10 +207,10 @@ export default {
   computed: {
     // 内存进度条
     storageProgress() {
-      return ((this.userInfo.neicun / 1048576 / 1024) * 100).toFixed(2) * 1;
+      return ((this.userInfo.storageSize / 1048576 / 1024) * 100).toFixed(2) * 1;
     },
     storageSize() {
-      return (this.userInfo.neicun / 1048576).toFixed(2);
+      return (this.userInfo.storageSize / 1048576).toFixed(2);
     },
   },
   watch: {

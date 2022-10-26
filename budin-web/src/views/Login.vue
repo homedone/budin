@@ -127,14 +127,15 @@ export default {
       );
       console.log(res);
       if (res.status == 200 && res.data.success) {
+        console.log(res);
         // 登陆成功
         // 将用户信息保存至vuex
-        this.$store.commit("updateUserInfo", res.data.data.mem);
+        this.$store.commit("updateUserInfo", res.data.data.budinUserInfoVO);
 
-        // 将返回的用户信息保存至localstorage中
+        //将返回的用户信息保存至localstorage中
         window.localStorage.setItem(
           "userInfo",
-          JSON.stringify(res.data.data.mem)
+          JSON.stringify(res.data.data.budinUserInfoVO)
         );
 
         // 将token存入本地

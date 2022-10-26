@@ -52,7 +52,8 @@
 <!--        <table tableName="budin_folder" domainObjectName="BudinFolder"></table>-->
 <!--        <table tableName="budin_relation_folder_file" domainObjectName="RelationFolderFile"></table>-->
 <!--        <table tableName="budin_relation_between_folder" domainObjectName="RelationBetweenFolder"></table>-->
-        <table tableName="budin_user" domainObjectName="BudinUser"></table>
+<!--        <table tableName="budin_user" domainObjectName="BudinUser"></table>-->
+        <table tableName="budin_user_storage_info" domainObjectName="BudinUserStorageInfo"></table>
 
     </context>
 </generatorConfiguration>

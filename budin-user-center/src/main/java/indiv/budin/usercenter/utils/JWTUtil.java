@@ -3,7 +3,6 @@ package indiv.budin.usercenter.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.impl.PublicClaims;
 import indiv.budin.common.exceptions.CommonException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,7 @@ import java.util.Date;
  * discription
  */
 @Component
-@ConfigurationProperties(prefix = "jwt.config")
+@ConfigurationProperties(prefix = "config.jwt")
 public class JWTUtil {
     //定义token返回头部
     public static String header;
@@ -41,6 +40,7 @@ public class JWTUtil {
      * @param subject
      * @return
      */
+
     public static String createToken(String subject) {
         Date expireDate = new Date(System.currentTimeMillis() + expireTime);
         return tokenPrefix + JWT.create()
@@ -86,19 +86,28 @@ public class JWTUtil {
     }
 
 
-    public static void setHeader(String header) {
+
+    public void setHeader(String header) {
         JWTUtil.header = header;
     }
 
-    public static void setTokenPrefix(String tokenPrefix) {
+
+    public void setTokenPrefix(String tokenPrefix) {
         JWTUtil.tokenPrefix = tokenPrefix;
     }
 
-    public static void setSecret(String secret) {
+    public void setSecret(String secret) {
         JWTUtil.secret = secret;
     }
 
-    public static void setExpireTime(long expireTime) {
+
+    public void setExpireTime(long expireTime) {
         JWTUtil.expireTime = expireTime;
     }
+
+    public void setRestTime(long restTime) {
+        JWTUtil.restTime = restTime;
+    }
+
+
 }

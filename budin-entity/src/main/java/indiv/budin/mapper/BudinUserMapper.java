@@ -3,6 +3,8 @@ package indiv.budin.mapper;
 import indiv.budin.entity.po.BudinUser;
 import indiv.budin.entity.po.BudinUserExample;
 import java.util.List;
+
+import indiv.budin.entity.po.BudinUserStorageInfo;
 import org.apache.ibatis.annotations.Param;
 
 public interface BudinUserMapper {
@@ -29,4 +31,5 @@ public interface BudinUserMapper {
     int updateByPrimaryKey(BudinUser record);
 
     BudinUser getUserByAccount( String account);
+
 }

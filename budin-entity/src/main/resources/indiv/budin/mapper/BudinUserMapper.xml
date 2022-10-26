@@ -91,7 +91,7 @@
     from budin_user
     where id = #{id,jdbcType=INTEGER}
   </select>
-  <select id="getUserByAccount" parameterType="java.lang.String" resultMap="indiv.budin.entity.po.BudinUser">
+  <select id="getUserByAccount" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from budin_user

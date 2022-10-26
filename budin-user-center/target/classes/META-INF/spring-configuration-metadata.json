@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "config.jwt",
+      "type": "indiv.budin.usercenter.utils.JWTUtil",
+      "sourceType": "indiv.budin.usercenter.utils.JWTUtil"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

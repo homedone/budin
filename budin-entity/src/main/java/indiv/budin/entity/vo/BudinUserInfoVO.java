@@ -8,13 +8,24 @@ import java.io.Serializable;
  * discription
  */
 public class BudinUserInfoVO implements Serializable {
+    private String userId;
     private String userAccount;
     public String userNickname;
     public String email;
     public String telephone;
-    public String storageSize;
+    public Integer storageSize;
     public String description;
 
+    public BudinUserInfoVO() {
+
+    }
+
+    public BudinUserInfoVO(String userAccount, String userNickname, String email, String telephone) {
+        this.userAccount = userAccount;
+        this.userNickname = userNickname;
+        this.email = email;
+        this.telephone = telephone;
+    }
 
     public String getUserAccount() {
         return userAccount;
@@ -48,11 +59,11 @@ public class BudinUserInfoVO implements Serializable {
         this.telephone = telephone;
     }
 
-    public String getStorageSize() {
+    public Integer getStorageSize() {
         return storageSize;
     }
 
-    public void setStorageSize(String storageSize) {
+    public void setStorageSize(Integer storageSize) {
         this.storageSize = storageSize;
     }
 

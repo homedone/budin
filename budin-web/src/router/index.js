@@ -1,7 +1,7 @@
 // import Vue from 'vue'
 import { createRouter, createWebHistory } from "vue-router";
 // import VueRouter from 'vue-router';
-// import vuexIndex from '@/store/index.js'
+import vuexIndex from '@/store/index.js'
 
 
 const Index = () => import('@/views/Portal.vue')
@@ -41,11 +41,12 @@ const router = createRouter({
 //   routes
 // })
 
-// router.beforeEach((to, from, next) => {
-//   if (to.path != '/login' && !vuexIndex.state.userInfo) {
-//     router.replace('/login')
-//   }
-//   next()
-// })
+router.beforeEach((to, from, next) => {
+  // if(localStorage.userInfo) vuexIndex.state.userInfo=localStorage.userInfo
+  if (to.path != '/login' && !vuexIndex.state.userInfo) {
+    router.replace('/login')
+  }
+  next()
+})
 
 export default router
