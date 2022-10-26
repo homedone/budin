@@ -210,7 +210,8 @@ export default {
       return ((this.userInfo.storageSize / 1048576 / 1024) * 100).toFixed(2) * 1;
     },
     storageSize() {
-      return (this.userInfo.storageSize / 1048576).toFixed(2);
+      // return (this.userInfo.storageSize / 1048576).toFixed(2);
+      return this.userInfo.storageSize;
     },
   },
   watch: {
@@ -218,8 +219,8 @@ export default {
       this.userInfo = current;
     },
     // 上面监听不到内存属性的变化，因为但内存属性发生改变时，userInfo的地址没有发生变化
-    "$store.state.userInfo.neicun"(current) {
-      this.userInfo.neicun = current;
+    "$store.state.userInfo.storageSize"(current) {
+      this.userInfo.storageSize = current;
     },
   },
 };

@@ -37,6 +37,7 @@ public class UserCenterController {
     public ResultUtil<BudinUserVO> loginByAccount(@RequestParam("account") String account, @RequestParam("password") String password) {
         try {
             BudinUser user = userService.getUserByAccount(account);
+            //此处密码要加密，并核对，后续再补充
             String pass = new String(password);
             if (user == null || !user.getPassword().equals(pass))
                 return ResultUtil.failWithExMessage(UserCenterCode.ACCOUNT_OR_PASSWORD_ERROR);

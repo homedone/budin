@@ -42,7 +42,6 @@ const router = createRouter({
 // })
 
 router.beforeEach((to, from, next) => {
-  // if(localStorage.userInfo) vuexIndex.state.userInfo=localStorage.userInfo
   if (to.path != '/login' && !vuexIndex.state.userInfo) {
     router.replace('/login')
   }
