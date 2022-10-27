@@ -2,6 +2,7 @@ import axios from 'axios';
 import qs from 'qs'
 
 
+
 export function request(url, params, method, type, header) {
     const instance = axios.create({
         baseURL: '/api',
@@ -11,7 +12,28 @@ export function request(url, params, method, type, header) {
 
     // axios拦截器
     instance.interceptors.request.use(config => {
-        return config
+        if (localStorage.getItem('token')) { 
+            //在请求头加入token，名字要和后端接收请求头的token名字一样 
+            config.headers.token=localStorage.getItem('token');  
+        } 
+        return config;
+        
+    },error => { 
+        return Promise.reject(error);
+     })
+
+     instance.interceptors.response.use(config=>{
+        if (response.data.code == 4030) {
+            //清除token 
+            localStorage.removeItem('token');
+            window.localStorage.removeItem("userInfo");
+            //跳转  
+            router.push({name: 'login'}); 
+           } else { 
+             return response 
+           } 
+    },error => { 
+        return Promise.reject(error); 
     })
 
     if (method && method == 'post') {

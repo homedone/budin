@@ -6,7 +6,9 @@ public enum CommonCode implements ResultCode {
     SUCCESS(true, 1000, "成功!"),
     FAIL(false, 4000, "失败"),
 
-    SYSTEM_ERROR(false, 3000, "系统异常");
+    SYSTEM_ERROR(false, 3000, "系统异常"),
+
+    TOKEN_EXPIRED(false, 4030, "token过期");
 
     /**
      * 状态

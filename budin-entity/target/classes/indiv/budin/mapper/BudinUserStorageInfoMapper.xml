@@ -5,7 +5,8 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="storage_type" jdbcType="VARCHAR" property="storageType" />
-    <result column="storage_size" jdbcType="INTEGER" property="storageSize" />
+    <result column="storage_size" jdbcType="BIGINT" property="storageSize" />
+    <result column="use_storage_size" jdbcType="BIGINT" property="useStorageSize" />
     <result column="build_time" jdbcType="TIMESTAMP" property="buildTime" />
     <result column="description" jdbcType="VARCHAR" property="description" />
   </resultMap>
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, storage_type, storage_size, build_time, description
+    id, user_id, storage_type, storage_size, use_storage_size, build_time, description
   </sql>
   <select id="selectByExample" parameterType="indiv.budin.entity.po.BudinUserStorageInfoExample" resultMap="BaseResultMap">
     select
@@ -84,17 +85,17 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from budin_user_storage_info
-    where id = #{id,jdbcType=INTEGER}
-  </select>
   <select id="getUserStorageInfoByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from budin_user_storage_info
     where user_id = #{userId,jdbcType=INTEGER}
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from budin_user_storage_info
+    where id = #{id,jdbcType=INTEGER}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from budin_user_storage_info
@@ -108,11 +109,11 @@
   </delete>
   <insert id="insert" parameterType="indiv.budin.entity.po.BudinUserStorageInfo">
     insert into budin_user_storage_info (id, user_id, storage_type, 
-      storage_size, build_time, description
-      )
+      storage_size, use_storage_size, build_time, 
+      description)
     values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{storageType,jdbcType=VARCHAR}, 
-      #{storageSize,jdbcType=INTEGER}, #{buildTime,jdbcType=TIMESTAMP}, #{description,jdbcType=VARCHAR}
-      )
+      #{storageSize,jdbcType=BIGINT}, #{useStorageSize,jdbcType=BIGINT}, #{buildTime,jdbcType=TIMESTAMP}, 
+      #{description,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="indiv.budin.entity.po.BudinUserStorageInfo">
     insert into budin_user_storage_info
@@ -128,6 +129,9 @@
       </if>
       <if test="storageSize != null">
         storage_size,
+      </if>
+      <if test="useStorageSize != null">
+        use_storage_size,
       </if>
       <if test="buildTime != null">
         build_time,
@@ -147,7 +151,10 @@
         #{storageType,jdbcType=VARCHAR},
       </if>
       <if test="storageSize != null">
-        #{storageSize,jdbcType=INTEGER},
+        #{storageSize,jdbcType=BIGINT},
+      </if>
+      <if test="useStorageSize != null">
+        #{useStorageSize,jdbcType=BIGINT},
       </if>
       <if test="buildTime != null">
         #{buildTime,jdbcType=TIMESTAMP},
@@ -176,7 +183,10 @@
         storage_type = #{record.storageType,jdbcType=VARCHAR},
       </if>
       <if test="record.storageSize != null">
-        storage_size = #{record.storageSize,jdbcType=INTEGER},
+        storage_size = #{record.storageSize,jdbcType=BIGINT},
+      </if>
+      <if test="record.useStorageSize != null">
+        use_storage_size = #{record.useStorageSize,jdbcType=BIGINT},
       </if>
       <if test="record.buildTime != null">
         build_time = #{record.buildTime,jdbcType=TIMESTAMP},
@@ -194,7 +204,8 @@
     set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
       storage_type = #{record.storageType,jdbcType=VARCHAR},
-      storage_size = #{record.storageSize,jdbcType=INTEGER},
+      storage_size = #{record.storageSize,jdbcType=BIGINT},
+      use_storage_size = #{record.useStorageSize,jdbcType=BIGINT},
       build_time = #{record.buildTime,jdbcType=TIMESTAMP},
       description = #{record.description,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -211,7 +222,10 @@
         storage_type = #{storageType,jdbcType=VARCHAR},
       </if>
       <if test="storageSize != null">
-        storage_size = #{storageSize,jdbcType=INTEGER},
+        storage_size = #{storageSize,jdbcType=BIGINT},
+      </if>
+      <if test="useStorageSize != null">
+        use_storage_size = #{useStorageSize,jdbcType=BIGINT},
       </if>
       <if test="buildTime != null">
         build_time = #{buildTime,jdbcType=TIMESTAMP},
@@ -226,7 +240,8 @@
     update budin_user_storage_info
     set user_id = #{userId,jdbcType=INTEGER},
       storage_type = #{storageType,jdbcType=VARCHAR},
-      storage_size = #{storageSize,jdbcType=INTEGER},
+      storage_size = #{storageSize,jdbcType=BIGINT},
+      use_storage_size = #{useStorageSize,jdbcType=BIGINT},
       build_time = #{buildTime,jdbcType=TIMESTAMP},
       description = #{description,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}

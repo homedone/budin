@@ -13,7 +13,6 @@ app.use(store)
 app.use(ElementPlus)
 app.mount('#app')
 import '@/assets/css/iconfont.css';
-if(localStorage.userInfo) store.state.userInfo=localStorage.userInfo
 // import './assets/main.css'
 
 // new Vue({

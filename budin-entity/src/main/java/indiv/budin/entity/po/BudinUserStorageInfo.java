@@ -9,7 +9,9 @@ public class BudinUserStorageInfo {
 
     private String storageType;
 
-    private Integer storageSize;
+    private Long storageSize;
+
+    private Long useStorageSize;
 
     private Date buildTime;
 
@@ -39,12 +41,20 @@ public class BudinUserStorageInfo {
         this.storageType = storageType == null ? null : storageType.trim();
     }
 
-    public Integer getStorageSize() {
+    public Long getStorageSize() {
         return storageSize;
     }
 
-    public void setStorageSize(Integer storageSize) {
+    public void setStorageSize(Long storageSize) {
         this.storageSize = storageSize;
+    }
+
+    public Long getUseStorageSize() {
+        return useStorageSize;
+    }
+
+    public void setUseStorageSize(Long useStorageSize) {
+        this.useStorageSize = useStorageSize;
     }
 
     public Date getBuildTime() {

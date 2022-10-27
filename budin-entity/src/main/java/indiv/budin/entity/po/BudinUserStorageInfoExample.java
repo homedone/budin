@@ -305,53 +305,113 @@ public class BudinUserStorageInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeEqualTo(Integer value) {
+        public Criteria andStorageSizeEqualTo(Long value) {
             addCriterion("storage_size =", value, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeNotEqualTo(Integer value) {
+        public Criteria andStorageSizeNotEqualTo(Long value) {
             addCriterion("storage_size <>", value, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeGreaterThan(Integer value) {
+        public Criteria andStorageSizeGreaterThan(Long value) {
             addCriterion("storage_size >", value, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeGreaterThanOrEqualTo(Integer value) {
+        public Criteria andStorageSizeGreaterThanOrEqualTo(Long value) {
             addCriterion("storage_size >=", value, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeLessThan(Integer value) {
+        public Criteria andStorageSizeLessThan(Long value) {
             addCriterion("storage_size <", value, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeLessThanOrEqualTo(Integer value) {
+        public Criteria andStorageSizeLessThanOrEqualTo(Long value) {
             addCriterion("storage_size <=", value, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeIn(List<Integer> values) {
+        public Criteria andStorageSizeIn(List<Long> values) {
             addCriterion("storage_size in", values, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeNotIn(List<Integer> values) {
+        public Criteria andStorageSizeNotIn(List<Long> values) {
             addCriterion("storage_size not in", values, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeBetween(Integer value1, Integer value2) {
+        public Criteria andStorageSizeBetween(Long value1, Long value2) {
             addCriterion("storage_size between", value1, value2, "storageSize");
             return (Criteria) this;
         }
 
-        public Criteria andStorageSizeNotBetween(Integer value1, Integer value2) {
+        public Criteria andStorageSizeNotBetween(Long value1, Long value2) {
             addCriterion("storage_size not between", value1, value2, "storageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeIsNull() {
+            addCriterion("use_storage_size is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeIsNotNull() {
+            addCriterion("use_storage_size is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeEqualTo(Long value) {
+            addCriterion("use_storage_size =", value, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeNotEqualTo(Long value) {
+            addCriterion("use_storage_size <>", value, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeGreaterThan(Long value) {
+            addCriterion("use_storage_size >", value, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeGreaterThanOrEqualTo(Long value) {
+            addCriterion("use_storage_size >=", value, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeLessThan(Long value) {
+            addCriterion("use_storage_size <", value, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeLessThanOrEqualTo(Long value) {
+            addCriterion("use_storage_size <=", value, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeIn(List<Long> values) {
+            addCriterion("use_storage_size in", values, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeNotIn(List<Long> values) {
+            addCriterion("use_storage_size not in", values, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeBetween(Long value1, Long value2) {
+            addCriterion("use_storage_size between", value1, value2, "useStorageSize");
+            return (Criteria) this;
+        }
+
+        public Criteria andUseStorageSizeNotBetween(Long value1, Long value2) {
+            addCriterion("use_storage_size not between", value1, value2, "useStorageSize");
             return (Criteria) this;
         }
 

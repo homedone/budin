@@ -1,7 +1,7 @@
 <template>
   <div class="UserInfoCard" v-if="userInfo">
     <div class="storageProgressContainer">
-      <div class="">{{ storageSize }}MB/1G</div>
+      <div class="">{{ usedstorageSize }} / {{storageSize}}</div>
       <el-progress
         :percentage="
           storageProgress.toFixed(0) * 1 ? storageProgress.toFixed(0) * 1 : 0
@@ -16,7 +16,7 @@
       <img :src="userInfo.avatar" alt="" v-if="userInfo.avatar" />
       <img src="@/assets/img/avatar.png" alt="" v-else />
     </div>
-    <div class="userName">{{ userInfo.nickname }}</div>
+    <div class="userName">{{ userInfo.userNickname }}</div>
     <div class="menuContainer">
       <div
         class="menu"
@@ -97,6 +97,7 @@ export default {
     // 点击退出登录的回调
     logout() {
       window.localStorage.removeItem("userInfo");
+      window.localStorage.removeItem("tocken");
       this.$store.commit("updateUserInfo", {});
       this.$router.push("/login");
     },
@@ -110,14 +111,12 @@ export default {
 
     // 请求用户信息
     async getUserInfo() {
-      console.log("why?");
-      console.log(this.$store.state.userInfo);
       // let res = await this.$request(
       //   `/educenter/member/getMemberInfo/${this.$store.state.userInfo.userAccount}`
       // );
-      // // console.log(res);
-      // this.userInfo = res.data.data.member;
-      // this.$store.commit("updateUserInfo", this.userInfo);
+      this.userInfo = this.$store.state.userInfo;
+      // console.log(this.$store.state.userInfo);
+      this.$store.commit("updateUserInfo", this.userInfo);
     },
 
     // 上传成功的钩子
@@ -204,26 +203,36 @@ export default {
     this.getUserInfo();
   },
   mounted() {},
+
   computed: {
-    // 内存进度条
+    // 存储进度条
     storageProgress() {
-      return ((this.userInfo.storageSize / 1048576 / 1024) * 100).toFixed(2) * 1;
+      return ((this.userInfo.usedStorageSize / this.userInfo.storageSize) * 100).toFixed(2) * 1;
     },
-    storageSize() {
-      // return (this.userInfo.storageSize / 1048576).toFixed(2);
-      return this.userInfo.storageSize;
+    usedstorageSize() {
+      return getSize(this.userInfo.usedStorageSize,3);
+    },
+    storageSize(){
+      return getSize(this.userInfo.storageSize,1);
     },
   },
   watch: {
     "$store.state.userInfo"(current) {
       this.userInfo = current;
     },
-    // 上面监听不到内存属性的变化，因为但内存属性发生改变时，userInfo的地址没有发生变化
-    "$store.state.userInfo.storageSize"(current) {
-      this.userInfo.storageSize = current;
+    // 上面监听不到内存属性的变化，因为存储属性发生改变时，userInfo的地址没有发生变化
+    "$store.state.userInfo.usedStorageSize"(current) {
+      this.userInfo.usedStorageSize = current;
     },
   },
 };
+function getSize(byteSize,accuracy=2){
+      byteSize/=1048576;
+      if(byteSize < 1024) return byteSize.toFixed(accuracy)+" MB";
+      byteSize/=1024;
+      if(byteSize<1024) return byteSize.toFixed(accuracy)+" GB";
+      return byteSize.toFixed(3)+" TB";
+    }
 </script>
 
 <style scoped>

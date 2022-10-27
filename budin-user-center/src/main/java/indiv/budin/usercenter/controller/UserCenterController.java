@@ -1,5 +1,6 @@
 package indiv.budin.usercenter.controller;
 
+import com.fasterxml.jackson.databind.BeanProperty;
 import indiv.budin.common.constants.UserCenterCode;
 import indiv.budin.common.utils.ResultUtil;
 import indiv.budin.entity.po.BudinUser;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -37,20 +37,22 @@ public class UserCenterController {
     public ResultUtil<BudinUserVO> loginByAccount(@RequestParam("account") String account, @RequestParam("password") String password) {
         try {
             BudinUser user = userService.getUserByAccount(account);
-            //此处密码要加密，并核对，后续再补充
+            //此处密码要加密，并核对，后续再补充,这里可以用手机号登陆
             String pass = new String(password);
             if (user == null || !user.getPassword().equals(pass))
                 return ResultUtil.failWithExMessage(UserCenterCode.ACCOUNT_OR_PASSWORD_ERROR);
             List<BudinUserStorageInfo> budinUserStorageInfoList = userService.getStorageInfoByUserId(user.getId());
             if (budinUserStorageInfoList.isEmpty())
                 return ResultUtil.failWithExMessage(UserCenterCode.BUDIN_STORAGE_ERROR);
-
-            BudinUserInfoVO budinUserInfoVO = new BudinUserInfoVO(user.getUserAccount(), user.getUserNickname(), user.getEmail(), user.getTelephone());
-            Integer storageSize = 0;
+            BudinUserInfoVO budinUserInfoVO = new BudinUserInfoVO();
+            BeanUtils.copyProperties(user,budinUserInfoVO);
+            long storageSize = 0, usedStorageSize = 0;
             for (BudinUserStorageInfo budinUserStorageInfo : budinUserStorageInfoList) {
                 storageSize += budinUserStorageInfo.getStorageSize();
+                usedStorageSize += budinUserStorageInfo.getUseStorageSize();
             }
             budinUserInfoVO.setStorageSize(storageSize);
+            budinUserInfoVO.setUsedStorageSize(usedStorageSize);
             budinUserInfoVO.setDescription(budinUserStorageInfoList.get(0).getDescription());
             String subject = account + user.getId().toString();
             String token = JWTUtil.createToken(subject);
@@ -62,5 +64,11 @@ public class UserCenterController {
             e.printStackTrace();
             return ResultUtil.failWithExMessage(UserCenterCode.SYSTEM_ERROR);
         }
+    }
+
+    @RequestMapping("/center/user/get/info")
+    public ResultUtil<BudinUserInfoVO> getUserInfoByUserId(Integer userId){
+        userService.getUserInfoByUserId(userId);
+        return ResultUtil.failWithExMessage(UserCenterCode.SYSTEM_ERROR);
     }
 }

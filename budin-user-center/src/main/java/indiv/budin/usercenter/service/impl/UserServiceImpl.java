@@ -21,6 +21,12 @@ public class UserServiceImpl implements UserService {
     private BudinUserMapper budinUserMapper;
     @Autowired
     private BudinUserStorageInfoMapper budinUserStorageInfoMapper;
+
+    @Override
+    public BudinUser getUserInfoByUserId(Integer id) {
+        return budinUserMapper.selectByPrimaryKey(id);
+    }
+
     @Override
     public BudinUser getUserByAccount(String account) {
         return budinUserMapper.getUserByAccount(account);

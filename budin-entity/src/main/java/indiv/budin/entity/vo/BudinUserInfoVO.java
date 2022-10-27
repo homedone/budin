@@ -8,12 +8,15 @@ import java.io.Serializable;
  * discription
  */
 public class BudinUserInfoVO implements Serializable {
-    private String userId;
+    private Integer userId;
     private String userAccount;
     public String userNickname;
+
     public String email;
     public String telephone;
-    public Integer storageSize;
+    public Long storageSize;
+    public Long usedStorageSize;
+
     public String description;
 
     public BudinUserInfoVO() {
@@ -59,11 +62,11 @@ public class BudinUserInfoVO implements Serializable {
         this.telephone = telephone;
     }
 
-    public Integer getStorageSize() {
+    public Long getStorageSize() {
         return storageSize;
     }
 
-    public void setStorageSize(Integer storageSize) {
+    public void setStorageSize(Long storageSize) {
         this.storageSize = storageSize;
     }
 
@@ -75,5 +78,19 @@ public class BudinUserInfoVO implements Serializable {
         this.description = description;
     }
 
+    public Long getUsedStorageSize() {
+        return usedStorageSize;
+    }
 
+    public void setUsedStorageSize(Long usedStorageSize) {
+        this.usedStorageSize = usedStorageSize;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 }

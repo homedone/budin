@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Service
 public interface UserService {
+    BudinUser getUserInfoByUserId(Integer id);
     public BudinUser getUserByAccount(String account);
 
     public BudinUser getUserByEmail(String email);

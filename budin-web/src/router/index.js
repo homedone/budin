@@ -40,9 +40,10 @@ const router = createRouter({
 //   base: process.env.BASE_URL,
 //   routes
 // })
-
+if(localStorage.userInfo) vuexIndex.state.userInfo=JSON.parse(localStorage.userInfo);
 router.beforeEach((to, from, next) => {
-  if (to.path != '/login' && !vuexIndex.state.userInfo) {
+  let token = localStorage.getItem('token');
+  if (to.path != '/login' && !vuexIndex.state.userInfo || token == null || token === '') {
     router.replace('/login')
   }
   next()
