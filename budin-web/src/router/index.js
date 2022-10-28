@@ -25,7 +25,7 @@ const routes = [
       { path: '/collectes', component: Collectes },
     ]
   },
-  { path: '/login', component: Login },
+  { path: '/login',name:'login', component: Login },
 ]
 
 // Vue.use(VueRouter)

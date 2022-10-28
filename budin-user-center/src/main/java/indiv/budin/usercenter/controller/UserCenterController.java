@@ -71,4 +71,10 @@ public class UserCenterController {
         userService.getUserInfoByUserId(userId);
         return ResultUtil.failWithExMessage(UserCenterCode.SYSTEM_ERROR);
     }
+
+    @RequestMapping("/center/logout")
+    public ResultUtil<String> logout(){
+
+        return ResultUtil.successWithoutData();
+    }
 }
