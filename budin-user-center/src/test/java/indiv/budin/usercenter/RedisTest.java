@@ -6,8 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import javax.annotation.Resource;
 
 /**
  * @author
@@ -23,7 +26,7 @@ public class RedisTest {
     }
     public Logger logger = LoggerFactory.getLogger(RedisTest.class);
     @Autowired
-    private RedisTemplate<String,String> stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
     @Test
     public void testRedis(){
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
@@ -33,6 +36,7 @@ public class RedisTest {
             e.printStackTrace();
         }
     }
+    @Test
     public void testRedisApi(){
 
     }

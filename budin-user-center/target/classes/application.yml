@@ -5,6 +5,7 @@ spring:
     name: budin-user-center
   redis:
     host: 10.112.49.187
+#    port: 6379
     timeout: 1000
     lettuce:
       pool:

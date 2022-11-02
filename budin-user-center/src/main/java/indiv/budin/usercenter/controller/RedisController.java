@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * @author
@@ -21,7 +22,9 @@ public class RedisController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @RequestMapping("/set/redis/key/value/remote")
+    public Logger logger=Logger.getLogger(RedisController.class.getName());
+
+    @RequestMapping("/center/redis/set/key/value")
     ResultUtil<String> setRedisKeyValueRemote(@RequestParam("key") String key, @RequestParam("value") String value) {
         try {
             ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
@@ -32,7 +35,7 @@ public class RedisController {
         }
     }
 
-    @RequestMapping("/set/redis/key/value/remote/time")
+    @RequestMapping("/center/redis/set/key/value/with/time")
     ResultUtil<String> setRedisKeyValueRemoteWithTimeout(@RequestParam("key") String key, @RequestParam("value") String value,
                                                          @RequestParam("time") long time, @RequestParam("TimeUnit") TimeUnit timeunit) {
         try {
@@ -44,7 +47,7 @@ public class RedisController {
         }
     }
 
-    @RequestMapping("/get/redis/value/by/key/remote")
+    @RequestMapping("/center/redis/get/value/by/key")
     ResultUtil<String> getRedisValueByKeyRemote(@RequestParam("key") String key) {
         try {
             ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
@@ -55,7 +58,7 @@ public class RedisController {
         }
     }
 
-    @RequestMapping("/remove/redis/key/remote")
+    @RequestMapping("/center/redis/remove/key")
     ResultUtil<String> removeRedisKeyRemote(@RequestParam("key") String key) {
         try {
             stringRedisTemplate.delete(key);
@@ -65,3 +68,4 @@ public class RedisController {
         }
     }
 }
+
