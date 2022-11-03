@@ -1,0 +1,21 @@
+server:
+  port: 3000
+spring:
+  #  cloud:
+  #    inetutils:
+  #      timeout-seconds: 10
+  application:
+    name: budin-gateway-zuul
+zuul:
+  ignored-services: "*"
+  sensitive-headers: "*"
+  routes:
+    budin-center:
+      service-id: budin-user-center
+      path: /center/**
+    budin-file-service:
+      service-id: budin-file-service
+      path: /file/**
+  host:
+    connect-timeout-millis: 80000 #HTTP连接超时要比Hystrix的大
+    socket-timeout-millis: 60000   #socket超时

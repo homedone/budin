@@ -5,7 +5,8 @@ spring:
     name: budin-user-center
   redis:
     host: 10.112.49.187
-#    port: 6379
+    port: 6379
+    password: dxq-py36
     timeout: 1000
     lettuce:
       pool:
@@ -24,7 +25,7 @@ mybatis:
 config:
   jwt:
     header: Authorization
-    tokenPrefix: Budin  #token前缀
+    tokenPrefix: Bearer  #token前缀
     secret: budin2021D1xSa13d41 #密钥
-    expireTime: 16 #token有效时间 (分钟) 建议一小时以上
-    restTime: 2
+    expireTime: 4 #token有效时间 (分钟) 建议一小时以上
+    restTime: 1

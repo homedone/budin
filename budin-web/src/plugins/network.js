@@ -14,7 +14,8 @@ export function request(url, params, method, type, header) {
     instance.interceptors.request.use(config => {
         if (localStorage.getItem('token')) { 
             //在请求头加入token，名字要和后端接收请求头的token名字一样 
-            config.headers.token=localStorage.getItem('token');  
+            config.headers.Authorization="Bearer"+localStorage.getItem('token');  
+            
         } 
         return config;
         

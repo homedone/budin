@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="budin-common-utils" />
+        <module name="budin-gateway" />
         <module name="budin-file-service" />
         <module name="budin-user-center" />
         <module name="budin-entity" />
@@ -21,6 +22,7 @@
       <module name="budin-common-utils" options="-parameters" />
       <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />
+      <module name="budin-gateway" options="-parameters" />
       <module name="budin-user-center" options="-parameters" />
     </option>
   </component>
