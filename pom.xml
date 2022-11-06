@@ -15,6 +15,7 @@
         <module>budin-user-center</module>
         <module>budin-gateway</module>
         <module>Budin-server-center-eureka</module>
+        <module>budin-grpc</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -52,6 +53,23 @@
             <version>${grpc.version}</version>
         </dependency>
         <!--  依赖包冲突 和eureka   -->
+
+<!--        <dependency>-->
+<!--            <groupId>io.grpc</groupId>-->
+<!--            <artifactId>grpc-netty</artifactId>-->
+<!--            <version>${grpc.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>io.grpc</groupId>-->
+<!--            <artifactId>grpc-protobuf</artifactId>-->
+<!--            <version>${grpc.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>io.grpc</groupId>-->
+<!--            <artifactId>grpc-stub</artifactId>-->
+<!--            <version>${grpc.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>

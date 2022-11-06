@@ -11,7 +11,11 @@
         <module name="budin-file-service" />
         <module name="budin-user-center" />
         <module name="budin-entity" />
+<<<<<<< HEAD
         <module name="Budin-server-center-eureka" />
+=======
+        <module name="budin-grpc" />
+>>>>>>> b4d467e7169e0e12360a896e2d075376ef5dc8b3
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
@@ -25,6 +29,7 @@
       <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />
       <module name="budin-gateway" options="-parameters" />
+      <module name="budin-grpc" options="-parameters" />
       <module name="budin-user-center" options="-parameters" />
     </option>
   </component>
