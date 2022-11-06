@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Budin-server-center-eureka</artifactId>
+    <artifactId>budin-server-center-eureka</artifactId>
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
