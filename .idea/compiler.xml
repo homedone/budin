@@ -11,6 +11,7 @@
         <module name="budin-file-service" />
         <module name="budin-user-center" />
         <module name="budin-entity" />
+        <module name="Budin-server-center-eureka" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
@@ -19,6 +20,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Budin-server-center-eureka" options="-parameters" />
       <module name="budin-common-utils" options="-parameters" />
       <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />

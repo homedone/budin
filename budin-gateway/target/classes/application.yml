@@ -5,17 +5,44 @@ spring:
   #    inetutils:
   #      timeout-seconds: 10
   application:
-    name: budin-gateway-zuul
-zuul:
-  ignored-services: "*"
-  sensitive-headers: "*"
-  routes:
-    budin-center:
-      service-id: budin-user-center
-      path: /center/**
-    budin-file-service:
-      service-id: budin-file-service
-      path: /file/**
-  host:
-    connect-timeout-millis: 80000 #HTTP连接超时要比Hystrix的大
-    socket-timeout-millis: 60000   #socket超时
+    name: budin-gateway
+
+
+  cloud:
+    gateway:
+      routes: # 服务路由列表
+        # - 表示列表，同级的 - 添加在同一列表内，id, uri, predicates 组成一个路由，是列表内的一个元素
+        - id: budin-user-center    # 路由 id，不可重复
+          uri: lb://budin-user-center
+          predicates: # 断言规则
+            - Path=/center/**    # 匹配以 /user 为开头的请求路径，将其路由到 user-service
+        - id: budin-file-service    # 路由 id，不可重复
+          uri: lb://budin-file-service
+          predicates: # 断言规则
+            - Path=/fike/**    # 匹配以 /user 为开头的请求路径，将其路由到 user-service
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:4000/eureka/
+#zuul:
+#  routes:
+#    budin-center:
+#       stripPrefix: false
+#       service-id: budin-user-center
+##       url: http://localhost:3030/
+#       path: /center/**
+#    budin-file-service:
+#       stripPrefix: false
+#       service-id: budin-file-service
+##       url: http://localhost:3020/
+#       path: /file/**
+#  ignored-services: "*"
+#  host:
+#    connect-timeout-millis: 80000 #HTTP连接超时要比Hystrix的大
+#    socket-timeout-millis: 60000   #socket超时
+
+
+
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000

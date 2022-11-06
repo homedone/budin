@@ -14,7 +14,7 @@ export function request(url, params, method, type, header) {
     instance.interceptors.request.use(config => {
         if (localStorage.getItem('token')) { 
             //在请求头加入token，名字要和后端接收请求头的token名字一样 
-            config.headers.Authorization="Bearer"+localStorage.getItem('token');  
+            config.headers.Authorization=localStorage.getItem('token');  
             
         } 
         return config;
@@ -23,7 +23,7 @@ export function request(url, params, method, type, header) {
         return Promise.reject(error);
      })
 
-     instance.interceptors.response.use(config=>{
+     instance.interceptors.response.use(response=>{
         if (response.data.code == 4030) {
             //清除token 
             localStorage.removeItem('token');

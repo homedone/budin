@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author
@@ -31,8 +32,11 @@ public class JWTUtil {
     //达到更新条件的更新剩余时间
     public static long restTime;
 
+
     //存进客户端的token的key名
     public static final String USER_LOGIN_TOKEN = "USER_LOGIN_TOKEN";
+
+
 
     /**
      * 创建tocken
@@ -59,7 +63,7 @@ public class JWTUtil {
         try {
             return JWT.require(Algorithm.HMAC512(secret))
                     .build()
-                    .verify(token.replace(tokenPrefix, ""))
+                    .verify(token.replaceFirst(tokenPrefix, ""))
                     .getSubject();
         } catch (TokenExpiredException e) {
             throw new CommonException("token已经过期");
@@ -74,17 +78,20 @@ public class JWTUtil {
      * @param token
      * @return
      */
-    public Date getExpirationDateFromToken(String token) {
+    public static Date getExpirationDateFromToken(String token) {
         return JWT.require(Algorithm.HMAC512(secret))
                 .build()
                 .verify(token.replace(tokenPrefix, ""))
                 .getExpiresAt();
     }
 
+    public static boolean isExpiration(String token) {
+        return getExpirationDateFromToken(token).getTime() - System.currentTimeMillis() > expireTime;
+    }
+
     public boolean isNearValidate(String token) {
         return (getExpirationDateFromToken(token).getTime() - System.currentTimeMillis()) < Math.min(restTime, (expireTime >> 2));
     }
-
 
 
     public void setHeader(String header) {
@@ -102,11 +109,12 @@ public class JWTUtil {
 
 
     public void setExpireTime(long expireTime) {
-        JWTUtil.expireTime = expireTime;
+        JWTUtil.expireTime = expireTime * 1000L * 60;
+        ;
     }
 
     public void setRestTime(long restTime) {
-        JWTUtil.restTime = restTime;
+        JWTUtil.restTime = restTime * 1000L * 60;
     }
 
 

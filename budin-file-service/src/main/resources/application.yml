@@ -14,6 +14,14 @@ spring:
     multipart:
       max-file-size: 100MB
       max-request-size: 500MB
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:4000/eureka/
+ribbon:
+  ReadTimeout: 60000
+  ConnectTimeout: 60000
+
 minio:
   endpoint: http://10.112.49.187:9110 #Minio服务所在地址
   bucketName: none

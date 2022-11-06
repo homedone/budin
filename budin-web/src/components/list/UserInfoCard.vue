@@ -96,6 +96,15 @@ export default {
   methods: {
     // 点击退出登录的回调
     logout() {
+      let res = this.$request(
+        "/center/logout",
+        null,
+        "get",
+      );
+      console.log(res);
+      if (res.success) {
+        this.$message.success("退出成功");
+      }
       window.localStorage.removeItem("userInfo");
       window.localStorage.removeItem("tocken");
       this.$store.commit("updateUserInfo", {});

@@ -13,12 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author
@@ -30,6 +32,8 @@ public class UserCenterController {
     public Logger logger = LoggerFactory.getLogger(UserCenterController.class);
     @Autowired
     private UserService userService;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
 
     @RequestMapping("/center/user/login")
@@ -37,6 +41,7 @@ public class UserCenterController {
     public ResultUtil<BudinUserVO> loginByAccount(@RequestParam("account") String account, @RequestParam("password") String password) {
         try {
             BudinUser user = userService.getUserByAccount(account);
+            logger.info(account);
             //此处密码要加密，并核对，后续再补充,这里可以用手机号登陆
             String pass = new String(password);
             if (user == null || !user.getPassword().equals(pass))
@@ -45,7 +50,7 @@ public class UserCenterController {
             if (budinUserStorageInfoList.isEmpty())
                 return ResultUtil.failWithExMessage(UserCenterCode.BUDIN_STORAGE_ERROR);
             BudinUserInfoVO budinUserInfoVO = new BudinUserInfoVO();
-            BeanUtils.copyProperties(user,budinUserInfoVO);
+            BeanUtils.copyProperties(user, budinUserInfoVO);
             long storageSize = 0, usedStorageSize = 0;
             for (BudinUserStorageInfo budinUserStorageInfo : budinUserStorageInfoList) {
                 storageSize += budinUserStorageInfo.getStorageSize();
@@ -67,14 +72,42 @@ public class UserCenterController {
     }
 
     @RequestMapping("/center/user/get/info")
-    public ResultUtil<BudinUserInfoVO> getUserInfoByUserId(Integer userId){
+    public ResultUtil<BudinUserInfoVO> getUserInfoByUserId(Integer userId) {
         userService.getUserInfoByUserId(userId);
         return ResultUtil.failWithExMessage(UserCenterCode.SYSTEM_ERROR);
     }
 
     @RequestMapping("/center/logout")
-    public ResultUtil<String> logout(){
-
+    @ResponseBody
+    public ResultUtil<String> logout(HttpServletRequest request) {
+        String token = request.getHeader(JWTUtil.header);
+        logger.info(token);
+        String check = JWTUtil.validateToken(token);
+        if (check==null) return ResultUtil.fail();
+        if (!JWTUtil.isExpiration(token)){
+            ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+            stringStringValueOperations.set(token,"black",JWTUtil.expireTime, TimeUnit.MILLISECONDS);
+        }
+        JWTUtil.getExpirationDateFromToken(token);
         return ResultUtil.successWithoutData();
+    }
+
+    @RequestMapping("/center/token/check")
+    @ResponseBody
+    public ResultUtil<String> tokenCheck(HttpServletRequest request) {
+        String token = request.getHeader(JWTUtil.header);
+        //验证token是否合法
+        String validate = JWTUtil.validateToken(token);
+        //验证token是否过期
+        if (validate==null || JWTUtil.isExpiration(token)) return ResultUtil.failWithExMessage(UserCenterCode.WITHOUT_LOGIN);
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+        String value = stringStringValueOperations.get(token);
+        //验证token是否在黑名单
+        if (value == null) return ResultUtil.successWithoutData();
+        return ResultUtil.failWithExMessage(UserCenterCode.WITHOUT_LOGIN);
+    }
+    @RequestMapping("/center/test")
+    public void test(){
+        logger.info("test");
     }
 }

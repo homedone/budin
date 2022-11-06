@@ -1,0 +1,16 @@
+server:
+  port: 4000
+spring:
+  application:
+    name: budin-eureka-center
+#  cloud:
+#    inetutils:
+#      timeout-seconds: 10
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/

@@ -31,7 +31,8 @@ public class RedisTest {
     public void testRedis(){
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         try {
-            stringStringValueOperations.set("dxq","student");
+            String res = stringStringValueOperations.get("ok");
+            logger.info(res);
         }catch (Exception e){
             e.printStackTrace();
         }
