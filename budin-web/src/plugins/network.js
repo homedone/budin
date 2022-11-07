@@ -1,7 +1,14 @@
 import axios from 'axios';
 import qs from 'qs'
+import router from '../router/index.js'
 
-
+function removeLocalstorage(){
+     //清除token 
+    localStorage.removeItem('token');
+    window.localStorage.removeItem("userInfo");
+    //跳转  
+    router.replace('/login');
+}
 
 export function request(url, params, method, type, header) {
     const instance = axios.create({
@@ -15,7 +22,6 @@ export function request(url, params, method, type, header) {
         if (localStorage.getItem('token')) { 
             //在请求头加入token，名字要和后端接收请求头的token名字一样 
             config.headers.Authorization=localStorage.getItem('token');  
-            
         } 
         return config;
         
@@ -23,18 +29,21 @@ export function request(url, params, method, type, header) {
         return Promise.reject(error);
      })
 
-     instance.interceptors.response.use(response=>{
-        if (response.data.code == 4030) {
-            //清除token 
-            localStorage.removeItem('token');
-            window.localStorage.removeItem("userInfo");
-            //跳转  
-            router.push({name: 'login'}); 
+    instance.interceptors.response.use(response=>{
+        console.log(response.status);
+        if (response.status==401 || response.data.code == 4030) {
+            removeLocalstorage();
            } else { 
-             return response 
+             return response; 
            } 
     },error => { 
         return Promise.reject(error); 
+    })
+    instance.interceptors.error.use(error=>{
+        console.log(error);
+        if(error.status==401){
+            removeLocalstorage();
+        }else return Promise.reject(error); 
     })
 
     if (method && method == 'post') {

@@ -19,7 +19,7 @@ spring:
         - id: budin-file-service    # 路由 id，不可重复
           uri: lb://budin-file-service
           predicates: # 断言规则
-            - Path=/fike/**    # 匹配以 /user 为开头的请求路径，将其路由到 user-service
+            - Path=/file/**    # 匹配以 /user 为开头的请求路径，将其路由到 user-service
 eureka:
   client:
     service-url:

@@ -6,30 +6,24 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="budin-common-utils" />
+        <module name="budin-grpc" />
+        <module name="budin-server-center-eureka" />
         <module name="budin-gateway" />
+        <module name="budin-common-utils" />
         <module name="budin-file-service" />
         <module name="budin-user-center" />
         <module name="budin-entity" />
-<<<<<<< HEAD
-        <module name="Budin-server-center-eureka" />
-=======
-        <module name="budin-grpc" />
->>>>>>> b4d467e7169e0e12360a896e2d075376ef5dc8b3
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="8">
-      <module name="budin-member-center" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Budin-server-center-eureka" options="-parameters" />
       <module name="budin-common-utils" options="-parameters" />
       <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />
       <module name="budin-gateway" options="-parameters" />
       <module name="budin-grpc" options="-parameters" />
+      <module name="budin-server-center-eureka" options="-parameters" />
       <module name="budin-user-center" options="-parameters" />
     </option>
   </component>

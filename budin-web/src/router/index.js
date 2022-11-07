@@ -43,9 +43,9 @@ const router = createRouter({
 if(localStorage.userInfo) vuexIndex.state.userInfo=JSON.parse(localStorage.userInfo);
 router.beforeEach((to, from, next) => {
   let token = localStorage.getItem('token');
-  if (to.path != '/login' && !vuexIndex.state.userInfo || token == null || token === '') {
-    router.replace('/login')
-  }
+  // if (to.path != '/login' && !vuexIndex.state.userInfo || token == null || token === '') {
+  //   router.replace('/login')
+  // }
   next()
 })
 

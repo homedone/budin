@@ -1,9 +1,12 @@
 package indiv.budin.gateway.filter;
 
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import indiv.budin.common.constants.GatewaySingleton;
 import indiv.budin.common.utils.UuidUtil;
 import indiv.budin.gateway.utils.PassWebUtil;
+import org.apache.http.util.EntityUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -13,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -41,30 +45,25 @@ public class UserCenterFilter implements GlobalFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
-
         if (!shouldFilter(request)) {
-
             return chain.filter(exchange);
         }
-
-
         String token = request.getHeaders().getFirst("Authorization");
-        String url = "http://localhost:3030/center/center/token/check";
+        String url = "http://localhost:3030/center/token/check";
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet get = new HttpGet(url);
         try {
             get.addHeader("Authorization", token);
             HttpResponse httpResponse = httpClient.execute(get);
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            logger.error("error");
-            if (statusCode == 2030) {
+            JSONObject jsonObject = JSON.parseObject(EntityUtils.toString(httpResponse.getEntity()));
+            String statusCode = jsonObject.getString("code");
+            logger.info("过滤 "+statusCode);
+            if ("2030".equals(statusCode)) {
                 logger.warn("未登陆");
-                String redirectUrl = "http://localhost:3010/login";
-                response.getHeaders().set(HttpHeaders.LOCATION, redirectUrl);
-                //303状态码表示由于请求对应的资源存在着另一个URI，应使用GET方法定向获取请求的资源
-                response.setStatusCode(HttpStatus.SEE_OTHER);
-                response.getHeaders().add("Content-Type", "text/plain;charset=UTF-8");
-                return response.setComplete();
+                response.getHeaders().add("Content-Type", "application/json;charset=utf-8");
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                DataBuffer wrap = response.bufferFactory().wrap(jsonObject.toJSONBBytes());
+                return response.writeWith(Mono.just(wrap));
             }
             return chain.filter(exchange);
         } catch (IOException e) {
@@ -74,12 +73,7 @@ public class UserCenterFilter implements GlobalFilter {
 
     public boolean shouldFilter(ServerHttpRequest request) {
         //将login放行
-        String servletPath = request.getPath().value();
-        logger.info(servletPath);
-        if (PassWebUtil.isPass(servletPath)) {
-            return false;
-        } else logger.info("过滤");
-        return true;
+        return !PassWebUtil.isPass(request.getPath().value());
     }
 
     private String gatewayEncryption(String secrete) throws NoSuchAlgorithmException {

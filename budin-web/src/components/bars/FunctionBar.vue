@@ -183,7 +183,7 @@ export default {
     async upload(response, file) {
       console.log(response);
       if (!response.success) {
-        this.$message.error(response.message);
+        this.$message.error("上传失败");
       }else{
          //   this.$message.success("文件上传成功!");
         // this.$emit("getListData");
@@ -204,7 +204,7 @@ export default {
 
     // 上传失败的钩子
     onError(err, file) {
-      //   console.log(err);
+      // console.log(err);
       // this.isUploadProgressShow = false;
       let arr = this.$store.state.uploadProgressList;
       let idx = arr.findIndex((item) => item.name == file.name);

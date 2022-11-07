@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import indiv.budin.common.exceptions.CommonException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @ConfigurationProperties(prefix = "config.jwt")
 public class JWTUtil {
+    private static Logger logger = LoggerFactory.getLogger(JWTUtil.class);
     //定义token返回头部
     public static String header;
 
@@ -66,10 +69,11 @@ public class JWTUtil {
                     .verify(token.replaceFirst(tokenPrefix, ""))
                     .getSubject();
         } catch (TokenExpiredException e) {
-            throw new CommonException("token已经过期");
+            logger.info("token已失效");
         } catch (Exception e) {
-            throw new CommonException("token验证失败");
+            logger.info("token验证失败");
         }
+        return null;
     }
 
     /**
