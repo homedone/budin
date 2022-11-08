@@ -7,8 +7,10 @@ import indiv.budin.common.utils.ResultUtil;
 import indiv.budin.entity.po.BudinUser;
 import indiv.budin.entity.po.BudinUserStorageInfo;
 import indiv.budin.entity.vo.BudinUserInfoVO;
+import indiv.budin.entity.vo.BudinUserRegisterVO;
 import indiv.budin.entity.vo.BudinUserVO;
 import indiv.budin.usercenter.service.api.UserService;
+import indiv.budin.usercenter.utils.EmailUtil;
 import indiv.budin.usercenter.utils.JWTUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -42,7 +45,6 @@ public class UserCenterController {
     public ResultUtil<BudinUserVO> loginByAccount(@RequestParam("account") String account, @RequestParam("password") String password) {
         try {
             BudinUser user = userService.getUserByAccount(account);
-            logger.info(account);
             //此处密码要加密，并核对，后续再补充,这里可以用手机号登陆
             String pass = new String(password);
             if (user == null || !user.getPassword().equals(pass))
@@ -72,6 +74,31 @@ public class UserCenterController {
         }
     }
 
+    /**
+     * 发送验证码注册
+     *
+     * @param email
+     * @return
+     * @throws MessagingException
+     */
+    @RequestMapping("/center/user/send/code")
+    public ResultUtil<String> sendCode(@RequestParam("email") String email) throws MessagingException {
+        //生成验证码，并发送
+        String content = null;
+        String contentType = "text/html;charset=utf-8";
+        String subject = "Budin Code";
+        boolean sendRes = EmailUtil.send(email, subject, content, contentType);
+        if (!sendRes) return ResultUtil.failWithExMessage(UserCenterCode.FAIL_SEND_CODE);
+        //发送成功后，存入redis...
+        return ResultUtil.successWithoutData();
+    }
+
+    @RequestMapping("/center/user/register")
+    @ResponseBody
+    public ResultUtil<String> register(@RequestBody BudinUserRegisterVO budinUserRegisterVO) {
+        return ResultUtil.successWithoutData();
+    }
+
     @RequestMapping("/center/user/get/info")
     public ResultUtil<BudinUserInfoVO> getUserInfoByUserId(Integer userId) {
         userService.getUserInfoByUserId(userId);
@@ -82,7 +109,6 @@ public class UserCenterController {
     @ResponseBody
     public ResultUtil<String> logout(HttpServletRequest request) {
         String token = request.getHeader(JWTUtil.header);
-        logger.info(token);
         String check = JWTUtil.validateToken(token);
         if (check == null) return ResultUtil.fail();
         if (!JWTUtil.isExpiration(token)) {
@@ -97,11 +123,9 @@ public class UserCenterController {
     @ResponseBody
     public ResultUtil<String> tokenCheck(HttpServletRequest request) {
         String token = request.getHeader(JWTUtil.header);
-        if (token==null || token.equals("")) return ResultUtil.failWithExMessage(CommonCode.UNAUTHORIZED);
-        //验证token是否合法
-        String validate = JWTUtil.validateToken(token);
-        //验证token是否过期
-        if (validate == null || JWTUtil.isExpiration(token))
+        if (token == null || token.equals("")) return ResultUtil.failWithExMessage(CommonCode.UNAUTHORIZED);
+        //验证token是否合法 验证token是否过期
+        if (JWTUtil.isExpiration(token) || JWTUtil.validateToken(token) == null)
             return ResultUtil.failWithExMessage(CommonCode.TOKEN_EXPIRED);
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         String value = stringStringValueOperations.get(token);

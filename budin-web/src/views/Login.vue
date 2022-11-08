@@ -21,7 +21,7 @@
                 <el-form-item>
                   <el-input
                     v-model="login.account"
-                    placeholder="请输入账户/手机号码"
+                    placeholder="请输入邮箱/用户名"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -42,8 +42,14 @@
               <el-form ref="form" :model="login" label-width="80px">
                 <el-form-item>
                   <el-input
-                    v-model="registered.mobile"
-                    placeholder="请输入手机号码"
+                    v-model="registered.account"
+                    placeholder="请输入用户名"
+                  ></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input
+                    v-model="registered.email"
+                    placeholder="请输入邮箱"
                   ></el-input>
                 </el-form-item>
                 <el-form-item>
@@ -102,7 +108,8 @@ export default {
         password: "",
       },
       registered: {
-        mobile: "",
+        account:"",
+        email: "",
         password: "",
         code: "",
         nickname: "",
@@ -243,13 +250,13 @@ export default {
 .mainBox {
   width: 350px;
   background-color: #fff;
-  height: 330px;
+  height: 300px;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .mainBoxRegistered {
-  height: 430px;
+  height: 480px;
 }
 
 .el-form /deep/ .el-form-item__content {

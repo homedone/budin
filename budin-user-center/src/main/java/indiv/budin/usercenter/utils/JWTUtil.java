@@ -62,10 +62,14 @@ public class JWTUtil {
      * @return
      */
     public static String validateToken(String token) {
-        return JWT.require(Algorithm.HMAC512(secret))
-                .build()
-                .verify(token.replaceFirst(tokenPrefix, ""))
-                .getSubject();
+        try {
+            return JWT.require(Algorithm.HMAC512(secret))
+                    .build()
+                    .verify(token.replaceFirst(tokenPrefix, ""))
+                    .getSubject();
+        }catch (TokenExpiredException tokenExpiredException){
+            return null;
+        }
     }
 
     /**
@@ -75,10 +79,14 @@ public class JWTUtil {
      * @return
      */
     public static Date getExpirationDateFromToken(String token) {
-        return JWT.require(Algorithm.HMAC512(secret))
-                .build()
-                .verify(token.replace(tokenPrefix, ""))
-                .getExpiresAt();
+        try {
+            return JWT.require(Algorithm.HMAC512(secret))
+                    .build()
+                    .verify(token.replace(tokenPrefix, ""))
+                    .getExpiresAt();
+        }catch (TokenExpiredException tokenExpiredException){
+            return null;
+        }
     }
 
     /**
@@ -87,11 +95,15 @@ public class JWTUtil {
      * @return
      */
     public static boolean isExpiration(String token) {
-        return getExpirationDateFromToken(token).getTime() - System.currentTimeMillis() > expireTime;
+        Date tokenDate = getExpirationDateFromToken(token);
+        if (tokenDate==null) return false;
+        return tokenDate.getTime() - System.currentTimeMillis() > expireTime;
     }
 
     public boolean isNearValidate(String token) {
-        return (getExpirationDateFromToken(token).getTime() - System.currentTimeMillis()) < Math.min(restTime, (expireTime >> 2));
+        Date tokenDate = getExpirationDateFromToken(token);
+        if (tokenDate==null) return false;
+        return (tokenDate.getTime() - System.currentTimeMillis()) < Math.min(restTime, (expireTime >> 2));
     }
 
 
