@@ -30,21 +30,18 @@ export function request(url, params, method, type, header) {
      })
 
     instance.interceptors.response.use(response=>{
-        console.log(response.status);
-        if (response.status==401 || response.data.code == 4030) {
+        if (response.data.code == 2030) {
             removeLocalstorage();
            } else { 
              return response; 
            } 
     },error => { 
-        return Promise.reject(error); 
-    })
-    instance.interceptors.error.use(error=>{
-        console.log(error);
-        if(error.status==401){
+        const { status } = error.response
+        if (status === 401) { // 未授权
             removeLocalstorage();
-        }else return Promise.reject(error); 
+        } 
     })
+    
 
     if (method && method == 'post') {
         if (type && type == "params") {

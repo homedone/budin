@@ -8,7 +8,9 @@ public enum CommonCode implements ResultCode {
 
     SYSTEM_ERROR(false, 3000, "系统异常"),
 
-    TOKEN_EXPIRED(false, 4030, "token过期");
+    UNAUTHORIZED(false,4010,"没有操作权限"),
+
+    TOKEN_EXPIRED(false, 4030, "登陆过期,请重新登陆");
 
     /**
      * 状态

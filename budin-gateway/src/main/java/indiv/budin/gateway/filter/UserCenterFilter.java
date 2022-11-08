@@ -17,7 +17,6 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -27,6 +26,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -50,19 +50,21 @@ public class UserCenterFilter implements GlobalFilter {
         }
         String token = request.getHeaders().getFirst("Authorization");
         String url = "http://localhost:3030/center/token/check";
+        logger.info(token);
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet get = new HttpGet(url);
         try {
             get.addHeader("Authorization", token);
             HttpResponse httpResponse = httpClient.execute(get);
             JSONObject jsonObject = JSON.parseObject(EntityUtils.toString(httpResponse.getEntity()));
-            String statusCode = jsonObject.getString("code");
-            logger.info("过滤 "+statusCode);
-            if ("2030".equals(statusCode)) {
-                logger.warn("未登陆");
-                response.getHeaders().add("Content-Type", "application/json;charset=utf-8");
+            boolean status = (Boolean) jsonObject.get("status");
+            logger.info("过滤 " + status);
+            if (!status) {
+                logger.warn("无权限");
+                response.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
-                DataBuffer wrap = response.bufferFactory().wrap(jsonObject.toJSONBBytes());
+                DataBuffer wrap = response.bufferFactory().wrap(jsonObject.toJSONString().getBytes(StandardCharsets.UTF_8));
+
                 return response.writeWith(Mono.just(wrap));
             }
             return chain.filter(exchange);
@@ -76,6 +78,13 @@ public class UserCenterFilter implements GlobalFilter {
         return !PassWebUtil.isPass(request.getPath().value());
     }
 
+    /**
+     * 这里本想给传输加个密，禁止直接访问服务
+     *
+     * @param secrete
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     private String gatewayEncryption(String secrete) throws NoSuchAlgorithmException {
         byte[] md5s = MessageDigest.getInstance("md5").digest(secrete.getBytes());
         String md5code = new BigInteger(1, md5s).toString(32);

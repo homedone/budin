@@ -11,8 +11,7 @@ public enum UserCenterCode implements ResultCode {
     SYSTEM_ERROR(false, 3020, "用户系统异常"),
     ACCOUNT_OR_PASSWORD_ERROR(false,2010,"用户名或密码有误"),
     BUDIN_STORAGE_ERROR(false,2020,"云盘信息有误"),
-
-    WITHOUT_LOGIN(false,2030,"未登陆");
+    WITHOUT_LOGIN(false,2030,"请重新登陆");
 
     private final boolean status;
     /**

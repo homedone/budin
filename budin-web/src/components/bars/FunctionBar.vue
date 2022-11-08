@@ -4,11 +4,11 @@
       <div class="left">
         <el-upload
           multiple     
-          :action="'/api/file/upload'"
+          :headers="setHeaders"
+          :action="upload"
           class="uploadButton"
-
           :show-file-list="false"
-          :on-success="upload"
+          :on-success="onSuccess"
           :on-error="onError"
           :on-progress="onProgress"
           :before-upload="beforeUpload">
@@ -153,6 +153,16 @@ export default {
       },
     },
   },
+  computed:{
+    //设置请求头
+    upload() {
+      return '/api/file/upload';
+    },
+    setHeaders(){
+      var token=localStorage.getItem('token');
+      return { Authorization: token };
+    },
+  },
   data() {
     return {
       //   是否点击了全选按钮
@@ -180,8 +190,8 @@ export default {
     },
 
     // 上传成功的钩子
-    async upload(response, file) {
-      console.log(response);
+    async onSuccess(response, file) {
+      console.log(response)
       if (!response.success) {
         this.$message.error("上传失败");
       }else{
@@ -204,8 +214,16 @@ export default {
 
     // 上传失败的钩子
     onError(err, file) {
-      // console.log(err);
+      console.log(err.message);
       // this.isUploadProgressShow = false;
+      if(err.status==401){
+         localStorage.removeItem('token');
+         window.localStorage.removeItem("userInfo");
+         //跳转  
+         this.$router.replace('/login');
+         this.$message.error(JSON.parse(err.message).message);
+         return;
+      }
       let arr = this.$store.state.uploadProgressList;
       let idx = arr.findIndex((item) => item.name == file.name);
       arr.splice(idx, 1);

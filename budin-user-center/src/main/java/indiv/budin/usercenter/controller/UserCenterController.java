@@ -1,6 +1,7 @@
 package indiv.budin.usercenter.controller;
 
 import com.fasterxml.jackson.databind.BeanProperty;
+import indiv.budin.common.constants.CommonCode;
 import indiv.budin.common.constants.UserCenterCode;
 import indiv.budin.common.utils.ResultUtil;
 import indiv.budin.entity.po.BudinUser;
@@ -83,10 +84,10 @@ public class UserCenterController {
         String token = request.getHeader(JWTUtil.header);
         logger.info(token);
         String check = JWTUtil.validateToken(token);
-        if (check==null) return ResultUtil.fail();
-        if (!JWTUtil.isExpiration(token)){
+        if (check == null) return ResultUtil.fail();
+        if (!JWTUtil.isExpiration(token)) {
             ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
-            stringStringValueOperations.set(token,"black",JWTUtil.expireTime, TimeUnit.MILLISECONDS);
+            stringStringValueOperations.set(token, "black", JWTUtil.expireTime, TimeUnit.MILLISECONDS);
         }
         JWTUtil.getExpirationDateFromToken(token);
         return ResultUtil.successWithoutData();
@@ -96,18 +97,21 @@ public class UserCenterController {
     @ResponseBody
     public ResultUtil<String> tokenCheck(HttpServletRequest request) {
         String token = request.getHeader(JWTUtil.header);
+        if (token==null || token.equals("")) return ResultUtil.failWithExMessage(CommonCode.UNAUTHORIZED);
         //验证token是否合法
         String validate = JWTUtil.validateToken(token);
         //验证token是否过期
-        if (validate==null || JWTUtil.isExpiration(token)) return ResultUtil.failWithExMessage(UserCenterCode.WITHOUT_LOGIN);
+        if (validate == null || JWTUtil.isExpiration(token))
+            return ResultUtil.failWithExMessage(CommonCode.TOKEN_EXPIRED);
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         String value = stringStringValueOperations.get(token);
         //验证token是否在黑名单
         if (value == null) return ResultUtil.successWithoutData();
         return ResultUtil.failWithExMessage(UserCenterCode.WITHOUT_LOGIN);
     }
+
     @RequestMapping("/center/test")
-    public void test(){
+    public void test() {
         logger.info("test");
     }
 }

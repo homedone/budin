@@ -40,7 +40,6 @@ public class JWTUtil {
     public static final String USER_LOGIN_TOKEN = "USER_LOGIN_TOKEN";
 
 
-
     /**
      * 创建tocken
      *
@@ -63,17 +62,10 @@ public class JWTUtil {
      * @return
      */
     public static String validateToken(String token) {
-        try {
-            return JWT.require(Algorithm.HMAC512(secret))
-                    .build()
-                    .verify(token.replaceFirst(tokenPrefix, ""))
-                    .getSubject();
-        } catch (TokenExpiredException e) {
-            logger.info("token已失效");
-        } catch (Exception e) {
-            logger.info("token验证失败");
-        }
-        return null;
+        return JWT.require(Algorithm.HMAC512(secret))
+                .build()
+                .verify(token.replaceFirst(tokenPrefix, ""))
+                .getSubject();
     }
 
     /**
@@ -89,6 +81,11 @@ public class JWTUtil {
                 .getExpiresAt();
     }
 
+    /**
+     * token是否过期
+     * @param token
+     * @return
+     */
     public static boolean isExpiration(String token) {
         return getExpirationDateFromToken(token).getTime() - System.currentTimeMillis() > expireTime;
     }
