@@ -56,6 +56,15 @@ public class EmailUtil {
         }
 
     }
+    public static String getEmailCode(int length){
+        StringBuilder builder = new StringBuilder();
+        if (length == 0) length = 6;
+        for (int i = 0; i < length; i++) {
+            int random = (int) (Math.random() * 10);
+            builder.append(random);
+        }
+        return builder.toString();
+    }
 
 
     public void setHost(String host) {

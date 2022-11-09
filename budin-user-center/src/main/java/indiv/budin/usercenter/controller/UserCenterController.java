@@ -2,6 +2,7 @@ package indiv.budin.usercenter.controller;
 
 import com.fasterxml.jackson.databind.BeanProperty;
 import indiv.budin.common.constants.CommonCode;
+import indiv.budin.common.constants.EmailTemplate;
 import indiv.budin.common.constants.UserCenterCode;
 import indiv.budin.common.utils.ResultUtil;
 import indiv.budin.entity.po.BudinUser;
@@ -84,12 +85,13 @@ public class UserCenterController {
     @RequestMapping("/center/user/send/code")
     public ResultUtil<String> sendCode(@RequestParam("email") String email) throws MessagingException {
         //生成验证码，并发送
-        String content = null;
-        String contentType = "text/html;charset=utf-8";
-        String subject = "Budin Code";
-        boolean sendRes = EmailUtil.send(email, subject, content, contentType);
+        String code = EmailUtil.getEmailCode(8);
+        String content = EmailTemplate.getEmailMessage(code, EmailTemplate.VALIDATE_TIME);
+        boolean sendRes = EmailUtil.send(email, EmailTemplate.EMAIL_SUBJECT, content, EmailTemplate.CONTENT_TYPE);
         if (!sendRes) return ResultUtil.failWithExMessage(UserCenterCode.FAIL_SEND_CODE);
         //发送成功后，存入redis...
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+        stringStringValueOperations.set(email, code, EmailTemplate.VALIDATE_TIME, TimeUnit.MINUTES);
         return ResultUtil.successWithoutData();
     }
 
