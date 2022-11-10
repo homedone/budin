@@ -123,7 +123,6 @@ public class JWTUtil {
 
     public void setExpireTime(long expireTime) {
         JWTUtil.expireTime = expireTime * 1000L * 60;
-        ;
     }
 
     public void setRestTime(long restTime) {

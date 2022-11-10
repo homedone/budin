@@ -16,6 +16,7 @@ public class PassWebUtil {
         pass.add("/center/user/register");
         pass.add("/center/test");
         pass.add("/center/logout");
+        pass.add("/center/user/send/code");
     }
 
     public static boolean isPass(String url) {

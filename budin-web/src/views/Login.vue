@@ -161,11 +161,18 @@ export default {
     // 获取验证码
     async getCode() {
       this.isCountDownShow = true;
+      
+
       let res = await this.$request(
-        `/edumsm/msm/send/${this.registered.mobile}`
+        "/center/user/send/code",
+        {email: `${this.registered.email}`},
+        "post",
+        "params",
+        "application"
       );
       console.log(res);
       if (res.data.success) {
+        this.$message.success("验证码已发送!");
         this.startCountDown();
       }
     },

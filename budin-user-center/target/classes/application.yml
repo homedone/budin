@@ -36,3 +36,7 @@ config:
     timeUnit: second # 单位分钟
     expireTime: 4 #token有效时间 (分钟) 建议一小时以上
     restTime: 1
+  email:
+    host: smtp.163.com
+    serverAddress: ietlabhuxin@163.com
+    authPass: WUYAJAOXGQANETCK

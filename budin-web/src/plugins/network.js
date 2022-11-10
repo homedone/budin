@@ -71,8 +71,14 @@ export function request(url, params, method, type, header) {
                         data: qs.stringify(params, { arrayFormat: 'repeat' }),
                         method: 'post',
                     })
-                }
-                else {
+                }else if(header=='application'){
+                    return instance.request({
+                        url,
+                        data: params,
+                        method: 'post',
+                        headers: {'Content-Type':'application/x-www-form-urlencoded'}
+                    })
+                }else{
                     return instance.request({
                         url,
                         data: params,

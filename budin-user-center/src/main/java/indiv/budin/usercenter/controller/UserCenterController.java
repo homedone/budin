@@ -83,11 +83,13 @@ public class UserCenterController {
      * @throws MessagingException
      */
     @RequestMapping("/center/user/send/code")
+    @ResponseBody
     public ResultUtil<String> sendCode(@RequestParam("email") String email) throws MessagingException {
         //生成验证码，并发送
         String code = EmailUtil.getEmailCode(8);
         String content = EmailTemplate.getEmailMessage(code, EmailTemplate.VALIDATE_TIME);
         boolean sendRes = EmailUtil.send(email, EmailTemplate.EMAIL_SUBJECT, content, EmailTemplate.CONTENT_TYPE);
+        logger.info(String.valueOf(sendRes));
         if (!sendRes) return ResultUtil.failWithExMessage(UserCenterCode.FAIL_SEND_CODE);
         //发送成功后，存入redis...
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
@@ -98,6 +100,7 @@ public class UserCenterController {
     @RequestMapping("/center/user/register")
     @ResponseBody
     public ResultUtil<String> register(@RequestBody BudinUserRegisterVO budinUserRegisterVO) {
+
         return ResultUtil.successWithoutData();
     }
 

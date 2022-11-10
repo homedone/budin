@@ -1,6 +1,11 @@
 {
   "groups": [
     {
+      "name": "config.email",
+      "type": "indiv.budin.usercenter.utils.EmailUtil",
+      "sourceType": "indiv.budin.usercenter.utils.EmailUtil"
+    },
+    {
       "name": "config.jwt",
       "type": "indiv.budin.usercenter.utils.JWTUtil",
       "sourceType": "indiv.budin.usercenter.utils.JWTUtil"
