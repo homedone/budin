@@ -31,4 +31,5 @@ public interface BudinUserMapper {
 
     BudinUser getUserByAccount( String account);
 
+    BudinUser getUserByEmail(String email);
 }

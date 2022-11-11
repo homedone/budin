@@ -20,7 +20,7 @@ public interface UserService {
 
     public List<BudinUserStorageInfo> getStorageInfoByUserId(Integer user_id);
 
-    void saveUser(BudinUser memberpo);
+    boolean saveUser(BudinUser memberpo);
 
     public boolean isAccountUsed(String account);
 }

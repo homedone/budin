@@ -5,6 +5,7 @@ import indiv.budin.common.constants.CommonCode;
 import indiv.budin.common.constants.EmailTemplate;
 import indiv.budin.common.constants.UserCenterCode;
 import indiv.budin.common.utils.ResultUtil;
+import indiv.budin.common.utils.UuidUtil;
 import indiv.budin.entity.po.BudinUser;
 import indiv.budin.entity.po.BudinUserStorageInfo;
 import indiv.budin.entity.vo.BudinUserInfoVO;
@@ -19,6 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -85,6 +87,9 @@ public class UserCenterController {
     @RequestMapping("/center/user/send/code")
     @ResponseBody
     public ResultUtil<String> sendCode(@RequestParam("email") String email) throws MessagingException {
+        //验证邮箱是否已经被使用
+        BudinUser userByEmail = userService.getUserByEmail(email);
+        if (userByEmail == null) return ResultUtil.failWithExMessage(UserCenterCode.EMAIL_USED);
         //生成验证码，并发送
         String code = EmailUtil.getEmailCode(8);
         String content = EmailTemplate.getEmailMessage(code, EmailTemplate.VALIDATE_TIME);
@@ -100,7 +105,23 @@ public class UserCenterController {
     @RequestMapping("/center/user/register")
     @ResponseBody
     public ResultUtil<String> register(@RequestBody BudinUserRegisterVO budinUserRegisterVO) {
-
+        String account = budinUserRegisterVO.getUserAccount();
+        BudinUser userByAccount = userService.getUserByAccount(account);
+        if (userByAccount == null) return ResultUtil.failWithExMessage(UserCenterCode.ACCOUNT_USED);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String userPassword = budinUserRegisterVO.getPassword();
+        String encode = bCryptPasswordEncoder.encode(userPassword);
+        String uuid = UuidUtil.makeUuid();
+        BudinUser budinUser = new BudinUser();
+        BeanUtils.copyProperties(budinUserRegisterVO, budinUser);
+        budinUser.setPassword(encode);
+        budinUser.setBucketName(uuid);
+        String code=budinUserRegisterVO.getCode();
+        ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
+        String value = stringStringValueOperations.get(budinUserRegisterVO.getEmail());
+        if (!code.equals(value)) return ResultUtil.failWithExMessage(UserCenterCode.CODE_ERROR);
+        boolean save = userService.saveUser(budinUser);
+        if (!save) return ResultUtil.fail();
         return ResultUtil.successWithoutData();
     }
 

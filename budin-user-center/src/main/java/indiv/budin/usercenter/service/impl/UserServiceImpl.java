@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public BudinUser getUserByEmail(String email) {
-        return null;
+        return budinUserMapper.getUserByEmail(email);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(BudinUser memberpo) {
-
+    public boolean saveUser(BudinUser budinUser) {
+        return budinUserMapper.insert(budinUser)>0;
     }
 
     @Override
