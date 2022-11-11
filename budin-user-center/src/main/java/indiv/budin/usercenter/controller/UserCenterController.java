@@ -1,9 +1,7 @@
 package indiv.budin.usercenter.controller;
 
 import com.fasterxml.jackson.databind.BeanProperty;
-import indiv.budin.common.constants.CommonCode;
-import indiv.budin.common.constants.EmailTemplate;
-import indiv.budin.common.constants.UserCenterCode;
+import indiv.budin.common.constants.*;
 import indiv.budin.common.utils.ResultUtil;
 import indiv.budin.common.utils.UuidUtil;
 import indiv.budin.entity.po.BudinUser;
@@ -48,9 +46,9 @@ public class UserCenterController {
     public ResultUtil<BudinUserVO> loginByAccount(@RequestParam("account") String account, @RequestParam("password") String password) {
         try {
             BudinUser user = userService.getUserByAccount(account);
-            //此处密码要加密，并核对，后续再补充,这里可以用手机号登陆
-            String pass = new String(password);
-            if (user == null || !user.getPassword().equals(pass))
+            //此处密码要加密，并核对
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            if (user == null || !bCryptPasswordEncoder.matches(password, user.getPassword()))
                 return ResultUtil.failWithExMessage(UserCenterCode.ACCOUNT_OR_PASSWORD_ERROR);
             List<BudinUserStorageInfo> budinUserStorageInfoList = userService.getStorageInfoByUserId(user.getId());
             if (budinUserStorageInfoList.isEmpty())
@@ -88,13 +86,16 @@ public class UserCenterController {
     @ResponseBody
     public ResultUtil<String> sendCode(@RequestParam("email") String email) throws MessagingException {
         //验证邮箱是否已经被使用
-        BudinUser userByEmail = userService.getUserByEmail(email);
-        if (userByEmail == null) return ResultUtil.failWithExMessage(UserCenterCode.EMAIL_USED);
+        try {
+            BudinUser userByEmail = userService.getUserByEmail(email);
+            if (userByEmail != null) return ResultUtil.failWithExMessage(UserCenterCode.EMAIL_USED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //生成验证码，并发送
         String code = EmailUtil.getEmailCode(8);
         String content = EmailTemplate.getEmailMessage(code, EmailTemplate.VALIDATE_TIME);
         boolean sendRes = EmailUtil.send(email, EmailTemplate.EMAIL_SUBJECT, content, EmailTemplate.CONTENT_TYPE);
-        logger.info(String.valueOf(sendRes));
         if (!sendRes) return ResultUtil.failWithExMessage(UserCenterCode.FAIL_SEND_CODE);
         //发送成功后，存入redis...
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
@@ -107,7 +108,7 @@ public class UserCenterController {
     public ResultUtil<String> register(@RequestBody BudinUserRegisterVO budinUserRegisterVO) {
         String account = budinUserRegisterVO.getUserAccount();
         BudinUser userByAccount = userService.getUserByAccount(account);
-        if (userByAccount == null) return ResultUtil.failWithExMessage(UserCenterCode.ACCOUNT_USED);
+        if (userByAccount != null) return ResultUtil.failWithExMessage(UserCenterCode.ACCOUNT_USED);
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String userPassword = budinUserRegisterVO.getPassword();
         String encode = bCryptPasswordEncoder.encode(userPassword);
@@ -116,12 +117,14 @@ public class UserCenterController {
         BeanUtils.copyProperties(budinUserRegisterVO, budinUser);
         budinUser.setPassword(encode);
         budinUser.setBucketName(uuid);
-        String code=budinUserRegisterVO.getCode();
+        String code = budinUserRegisterVO.getCode();
         ValueOperations<String, String> stringStringValueOperations = stringRedisTemplate.opsForValue();
         String value = stringStringValueOperations.get(budinUserRegisterVO.getEmail());
         if (!code.equals(value)) return ResultUtil.failWithExMessage(UserCenterCode.CODE_ERROR);
+        //注册时创建存储空间
         boolean save = userService.saveUser(budinUser);
         if (!save) return ResultUtil.fail();
+        //这里应该调用rpc创建桶，如果创建桶失败，前端应该再次发起请求创建桶
         return ResultUtil.successWithoutData();
     }
 

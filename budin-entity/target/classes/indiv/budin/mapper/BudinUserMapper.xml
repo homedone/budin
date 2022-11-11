@@ -97,6 +97,13 @@
     from budin_user
     where user_account = #{account,jdbcType=VARCHAR}
   </select>
+
+  <select id="getUserByEmail" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from budin_user
+    where email = #{email,jdbcType=VARCHAR}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from budin_user
     where id = #{id,jdbcType=INTEGER}

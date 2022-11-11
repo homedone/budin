@@ -1,5 +1,7 @@
 package indiv.budin.usercenter.service.impl;
 
+import indiv.budin.common.constants.StorageSize;
+import indiv.budin.common.constants.StorageType;
 import indiv.budin.entity.po.BudinUser;
 import indiv.budin.entity.po.BudinUserStorageInfo;
 import indiv.budin.mapper.BudinUserMapper;
@@ -8,6 +10,7 @@ import indiv.budin.usercenter.service.api.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,7 +47,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveUser(BudinUser budinUser) {
-        return budinUserMapper.insert(budinUser)>0;
+        int insert = budinUserMapper.insert(budinUser);
+        if (insert == 0) return false;
+        BudinUser userByEmail = budinUserMapper.getUserByEmail(budinUser.getEmail());
+        BudinUserStorageInfo budinUserStorageInfo = new BudinUserStorageInfo();
+        budinUserStorageInfo.setUserId(userByEmail.getId());
+        budinUserStorageInfo.setStorageSize(StorageSize.ORDINARY_STORAGE * StorageSize.GB);
+        budinUserStorageInfo.setStorageType(StorageType.STORAGE_ORDINARY);
+        budinUserStorageInfo.setUseStorageSize(0L);
+        budinUserStorageInfo.setBuildTime(new Date());
+        int storage = budinUserStorageInfoMapper.insert(budinUserStorageInfo);
+        return storage > 0;
     }
 
     @Override
