@@ -15,7 +15,7 @@
         <module>budin-user-center</module>
         <module>budin-gateway</module>
         <module>budin-server-center-eureka</module>
-        <module>budin-grpc</module>
+        <module>budin-rpc</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
