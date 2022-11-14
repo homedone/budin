@@ -16,6 +16,7 @@
         <module>budin-gateway</module>
         <module>budin-server-center-eureka</module>
         <module>budin-rpc</module>
+        <module>budin-framework-ioc</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

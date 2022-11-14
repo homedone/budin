@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config></context:annotation-config>
+    <beans>
+        <bean id="userService" class="indiv.budin.ioc.test.UserService">
+
+        </bean>
+        <bean id="user1" class="indiv.budin.ioc.test.User" >
+            <property name="userName" value="dxq"></property>
+            <property name="password" value="duxq"></property>
+        </bean>
+    </beans>
+</beans>

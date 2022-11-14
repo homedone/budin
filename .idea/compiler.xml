@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="budin-framework-ioc" />
         <module name="budin-rpc" />
         <module name="budin-server-center-eureka" />
         <module name="budin-gateway" />
@@ -22,6 +23,7 @@
       <module name="budin-common-utils" options="-parameters" />
       <module name="budin-entity" options="-parameters" />
       <module name="budin-file-service" options="-parameters" />
+      <module name="budin-framework-ioc" options="-parameters" />
       <module name="budin-gateway" options="-parameters" />
       <module name="budin-rpc" options="-parameters" />
       <module name="budin-server-center-eureka" options="-parameters" />
