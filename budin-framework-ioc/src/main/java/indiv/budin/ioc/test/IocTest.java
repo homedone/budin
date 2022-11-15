@@ -1,10 +1,12 @@
 package indiv.budin.ioc.test;
 
+import indiv.budin.ioc.annotations.IocBean;
 import indiv.budin.ioc.containers.AnnotationContainer;
 import indiv.budin.ioc.containers.IocContainer;
 import indiv.budin.ioc.utils.PackageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
@@ -23,6 +25,7 @@ public class IocTest {
         AnnotationContainer iocContainer = new AnnotationContainer();
         iocContainer.iocScan(UserService.class);
         User user = (User) iocContainer.getBean(User.class.getName());
+        iocContainer.setAttributionByFieldAnnotation(User.class, IocBean.class);
         logger.info(user.introduce());
     }
 

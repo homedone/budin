@@ -18,10 +18,9 @@ import org.springframework.context.annotation.Configuration;
 public class UserService {
     public UserService() {
     }
-    @Autowired
     User user;
 
     User getUserSingleton(){
-        return new User("lyh","lyha!");
+        return new User(new Address(),"lyh","lyha!");
     }
 }

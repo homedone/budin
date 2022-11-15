@@ -1,5 +1,6 @@
 package indiv.budin.ioc.test;
 
+import indiv.budin.ioc.annotations.IocBean;
 import indiv.budin.ioc.annotations.IocComponent;
 import indiv.budin.ioc.annotations.IocScan;
 import jdk.nashorn.internal.objects.annotations.Constructor;
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    @IocBean
+    private Address address;
     private String userName;
     private String password;
 

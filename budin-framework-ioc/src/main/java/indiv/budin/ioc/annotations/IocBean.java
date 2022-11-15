@@ -1,15 +1,13 @@
 package indiv.budin.ioc.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  *  运行时可以读取
- *  修饰方法
+ *  修饰方法,属性
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
+@Target({ElementType.FIELD,ElementType.METHOD})
 public @interface IocBean {
+    String name() default "";
 }

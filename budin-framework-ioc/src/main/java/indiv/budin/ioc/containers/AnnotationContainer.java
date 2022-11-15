@@ -1,10 +1,13 @@
 package indiv.budin.ioc.containers;
 
+import indiv.budin.ioc.annotations.IocBean;
 import indiv.budin.ioc.annotations.IocComponent;
 import indiv.budin.ioc.annotations.IocScan;
+import indiv.budin.ioc.annotations.IocService;
 import indiv.budin.ioc.constants.ExceptionMessage;
 import indiv.budin.ioc.exceptions.NoScanerException;
 import indiv.budin.ioc.utils.PackageUtil;
+import indiv.budin.ioc.utils.StringUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -33,30 +36,39 @@ public class AnnotationContainer implements IocContainer {
         IocScan iocScan = clazz.getAnnotation(IocScan.class);
         String scanPath = iocScan.value();
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
-        this.addToContainer(packageClass,IocComponent.class);
+        this.addToContainer(packageClass, IocComponent.class);
+        this.addToContainer(packageClass, IocService.class);
     }
 
-    public void setAttributionByFieldAnnotation(Class<?> clazz,Class<? extends Annotation> annotation)  {
-        Object obj = beanContainer.get(clazz.getName());
-        for (Field field : clazz.getFields()) {
+    public void setAttributionByFieldAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
+        for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
-            if(field.isAnnotationPresent(annotation)){
-                String name = field.getName();
-                String type = field.getType().getName();
+            if (field.isAnnotationPresent(annotation)) {
+                String name= field.getType().getName();
+                System.out.println("name: "+name);
                 Method method;
+                if (!beanContainer.containsKey(name)) {
+                    IocBean iocBean=field.getAnnotation(IocBean.class);
+                    if (iocBean!=null && beanContainer.containsKey(iocBean.name())) {
+                        name = iocBean.name();
+                    } else continue;
+                }
+                Object obj=beanContainer.get(name);
+//                System.out.println(name);
+                String[] nameSplit = name.split("\\.");
                 try {
-                    if (!beanContainer.contains(type)){
-                        if(beanContainer.contains(name)){
-                            method=clazz.getDeclaredMethod("a");
-                        }
-                    }
-                }catch (NoSuchMethodException e){
+                    String paramClassName = nameSplit[nameSplit.length-1];
+                    System.out.println(paramClassName);
+                    method = clazz.getDeclaredMethod("set" + paramClassName);
+//                    method.invoke();
+                } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }
             }
         }
 
     }
+
 
     public void addToContainer(Set<Class<?>> packageClass, Class<? extends Annotation> annotation) {
         try {
@@ -72,7 +84,12 @@ public class AnnotationContainer implements IocContainer {
 
     @Override
     public Object getBean(String name) {
-        return beanContainer.get(name);
+        try {
+            return beanContainer.get(name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
