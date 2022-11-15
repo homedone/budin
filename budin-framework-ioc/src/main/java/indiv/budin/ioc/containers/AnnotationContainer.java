@@ -7,6 +7,8 @@ import indiv.budin.ioc.exceptions.NoScanerException;
 import indiv.budin.ioc.utils.PackageUtil;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * discription
  */
 public class AnnotationContainer implements IocContainer {
-    private ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
 
 
     public AnnotationContainer() {
@@ -31,8 +33,30 @@ public class AnnotationContainer implements IocContainer {
         IocScan iocScan = clazz.getAnnotation(IocScan.class);
         String scanPath = iocScan.value();
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
+        this.addToContainer(packageClass,IocComponent.class);
     }
 
+    public void setAttributionByFieldAnnotation(Class<?> clazz,Class<? extends Annotation> annotation)  {
+        Object obj = beanContainer.get(clazz.getName());
+        for (Field field : clazz.getFields()) {
+            field.setAccessible(true);
+            if(field.isAnnotationPresent(annotation)){
+                String name = field.getName();
+                String type = field.getType().getName();
+                Method method;
+                try {
+                    if (!beanContainer.contains(type)){
+                        if(beanContainer.contains(name)){
+                            method=clazz.getDeclaredMethod("a");
+                        }
+                    }
+                }catch (NoSuchMethodException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
 
     public void addToContainer(Set<Class<?>> packageClass, Class<? extends Annotation> annotation) {
         try {
@@ -48,7 +72,7 @@ public class AnnotationContainer implements IocContainer {
 
     @Override
     public Object getBean(String name) {
-        return null;
+        return beanContainer.get(name);
     }
 
     @Override

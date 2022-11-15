@@ -1,5 +1,6 @@
 package indiv.budin.ioc.test;
 
+import indiv.budin.ioc.annotations.IocComponent;
 import indiv.budin.ioc.annotations.IocScan;
 import jdk.nashorn.internal.objects.annotations.Constructor;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * discription
  */
 
+@IocComponent
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

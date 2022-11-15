@@ -20,9 +20,10 @@ public class IocTest {
      * 测试，如果没有值，就会抛出 NoScanException
      */
     public static void testAnnotation() {
-        User user = new User("dxq", "dxq");
         AnnotationContainer iocContainer = new AnnotationContainer();
-        iocContainer.iocScan(user.getClass());
+        iocContainer.iocScan(UserService.class);
+        User user = (User) iocContainer.getBean(User.class.getName());
+        logger.info(user.introduce());
     }
 
     public static void scanPackage() {
@@ -33,7 +34,7 @@ public class IocTest {
     }
 
     public static void main(String[] args) {
-//        testAnnotation();
-        scanPackage();
+        testAnnotation();
+//        scanPackage();
     }
 }
