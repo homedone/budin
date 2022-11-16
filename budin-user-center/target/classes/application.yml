@@ -38,5 +38,5 @@ config:
     restTime: 1
   email:
     host: smtp.163.com
-    serverAddress: ietlabhuxin@163.com
-    authPass: WUYAJAOXGQANETCK
+    serverAddress:
+    authPass:

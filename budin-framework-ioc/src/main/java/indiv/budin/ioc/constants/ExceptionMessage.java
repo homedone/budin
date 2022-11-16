@@ -8,4 +8,5 @@ package indiv.budin.ioc.constants;
 public class ExceptionMessage {
     public static final String NO_SCAN_EXCEPTION="can not scan bean package";
     public static final String NOT_FIND_CLASS_EXCEPTION = "can not find class";
+    public static final String NO_BEAN_EXCEPTION = "can not find bean in container";
 }

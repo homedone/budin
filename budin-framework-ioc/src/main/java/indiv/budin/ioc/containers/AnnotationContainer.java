@@ -5,13 +5,16 @@ import indiv.budin.ioc.annotations.IocComponent;
 import indiv.budin.ioc.annotations.IocScan;
 import indiv.budin.ioc.annotations.IocService;
 import indiv.budin.ioc.constants.ExceptionMessage;
+import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NoScanerException;
 import indiv.budin.ioc.utils.PackageUtil;
 import indiv.budin.ioc.utils.StringUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,27 +44,30 @@ public class AnnotationContainer implements IocContainer {
     }
 
     public void setAttributionByFieldAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
+        if (!beanContainer.containsKey(clazz.getName())) {
+            throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
+        }
+        Object clazzObj = beanContainer.get(clazz.getName());
         for (Field field : clazz.getDeclaredFields()) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(annotation)) {
-                String name= field.getType().getName();
-                System.out.println("name: "+name);
+                String name = field.getType().getName();
+                System.out.println("name: " + name);
                 Method method;
                 if (!beanContainer.containsKey(name)) {
-                    IocBean iocBean=field.getAnnotation(IocBean.class);
-                    if (iocBean!=null && beanContainer.containsKey(iocBean.name())) {
+                    IocBean iocBean = field.getAnnotation(IocBean.class);
+                    if (iocBean != null && beanContainer.containsKey(iocBean.name())) {
                         name = iocBean.name();
                     } else continue;
                 }
-                Object obj=beanContainer.get(name);
-//                System.out.println(name);
+                Object obj = beanContainer.get(name);
                 String[] nameSplit = name.split("\\.");
                 try {
-                    String paramClassName = nameSplit[nameSplit.length-1];
-                    System.out.println(paramClassName);
-                    method = clazz.getDeclaredMethod("set" + paramClassName);
-//                    method.invoke();
-                } catch (NoSuchMethodException e) {
+                    String paramClassName = nameSplit[nameSplit.length - 1];
+                    String methodName = "set" + paramClassName;
+                    method = clazz.getMethod(methodName, field.getType());
+                    method.invoke(clazzObj, obj);
+                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
