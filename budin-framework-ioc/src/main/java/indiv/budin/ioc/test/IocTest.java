@@ -1,12 +1,11 @@
 package indiv.budin.ioc.test;
 
-import indiv.budin.ioc.annotations.IocBean;
 import indiv.budin.ioc.containers.AnnotationContainer;
+import indiv.budin.ioc.containers.AnnotationDependencyInjector;
 import indiv.budin.ioc.containers.IocContainer;
 import indiv.budin.ioc.utils.PackageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
@@ -22,11 +21,17 @@ public class IocTest {
      * 测试，如果没有值，就会抛出 NoScanException
      */
     public static void testAnnotation() {
-        AnnotationContainer iocContainer = new AnnotationContainer();
+        AnnotationDependencyInjector annotationDependencyInjector = new AnnotationDependencyInjector();
+        IocContainer iocContainer=annotationDependencyInjector.getIocContainer();
         iocContainer.iocScan(UserService.class);
         User user = (User) iocContainer.getBean(User.class.getName());
-        iocContainer.setAttributionByFieldAnnotation(User.class, IocBean.class);
+        //这里没有注入，Address is null
+        if (user.getAddress()!=null)
+            logger.info(user.getAddress().toString());
+        annotationDependencyInjector.setAttributionByAutowired(User.class);
         logger.info(user.introduce());
+        //这里属性注入，not null
+        logger.info(user.getAddress().toString());
     }
 
     public static void scanPackage() {

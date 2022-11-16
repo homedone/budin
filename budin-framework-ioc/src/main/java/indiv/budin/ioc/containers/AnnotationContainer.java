@@ -1,22 +1,19 @@
 package indiv.budin.ioc.containers;
 
-import indiv.budin.ioc.annotations.IocBean;
-import indiv.budin.ioc.annotations.IocComponent;
-import indiv.budin.ioc.annotations.IocScan;
-import indiv.budin.ioc.annotations.IocService;
+import indiv.budin.ioc.annotations.*;
 import indiv.budin.ioc.constants.ExceptionMessage;
 import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NoScanerException;
 import indiv.budin.ioc.utils.PackageUtil;
 import indiv.budin.ioc.utils.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,11 +24,21 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AnnotationContainer implements IocContainer {
     private final ConcurrentHashMap<String, Object> beanContainer = new ConcurrentHashMap<>();
 
+    private static volatile IocContainer iocContainer;
 
-    public AnnotationContainer() {
+
+    private AnnotationContainer() {
 
     }
 
+    @Override
+    public void scan(Set<Class<?>> packageClass) {
+        this.addToContainer(packageClass, IocService.class);
+        this.addToContainer(packageClass, IocComponent.class);
+        this.addToContainer(packageClass, IocController.class);
+    }
+
+    @Override
     public void iocScan(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(IocScan.class)) {
             throw new NoScanerException(ExceptionMessage.NO_SCAN_EXCEPTION);
@@ -39,40 +46,38 @@ public class AnnotationContainer implements IocContainer {
         IocScan iocScan = clazz.getAnnotation(IocScan.class);
         String scanPath = iocScan.value();
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
-        this.addToContainer(packageClass, IocComponent.class);
-        this.addToContainer(packageClass, IocService.class);
+        scan(packageClass);
     }
 
-    public void setAttributionByFieldAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
-        if (!beanContainer.containsKey(clazz.getName())) {
-            throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
-        }
-        Object clazzObj = beanContainer.get(clazz.getName());
-        for (Field field : clazz.getDeclaredFields()) {
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(annotation)) {
-                String name = field.getType().getName();
-                System.out.println("name: " + name);
-                Method method;
-                if (!beanContainer.containsKey(name)) {
-                    IocBean iocBean = field.getAnnotation(IocBean.class);
-                    if (iocBean != null && beanContainer.containsKey(iocBean.name())) {
-                        name = iocBean.name();
-                    } else continue;
-                }
-                Object obj = beanContainer.get(name);
-                String[] nameSplit = name.split("\\.");
-                try {
-                    String paramClassName = nameSplit[nameSplit.length - 1];
-                    String methodName = "set" + paramClassName;
-                    method = clazz.getMethod(methodName, field.getType());
-                    method.invoke(clazzObj, obj);
-                } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                    e.printStackTrace();
+    public Map<String, Object> getBeanContainer() {
+        return beanContainer;
+    }
+
+    public static IocContainer getInstance() {
+        if (iocContainer == null) {
+            synchronized (AnnotationContainer.class) {
+                if (iocContainer == null) {
+                    iocContainer = new AnnotationContainer();
                 }
             }
         }
+        return iocContainer;
+    }
 
+    @Override
+    public List<Class<?>> getClassesByInterface(Class<?> clazz) {
+        List<Class<?>> interfaceClassSet = null;
+        Set<String> keySet = beanContainer.keySet();
+        if (!clazz.isInterface()) {
+            interfaceClassSet = new ArrayList<>();
+            for (String key : keySet) {
+                Class<?> keyClass = beanContainer.get(key).getClass();
+                if (clazz.isAssignableFrom(keyClass)) {
+                    interfaceClassSet.add(keyClass);
+                }
+            }
+        }
+        return interfaceClassSet;
     }
 
 
@@ -89,6 +94,11 @@ public class AnnotationContainer implements IocContainer {
     }
 
     @Override
+    public boolean containsBean(String name) {
+        return beanContainer.containsKey(name);
+    }
+
+    @Override
     public Object getBean(String name) {
         try {
             return beanContainer.get(name);
@@ -98,7 +108,6 @@ public class AnnotationContainer implements IocContainer {
         return null;
     }
 
-    @Override
     public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation) {
         Set<Class<?>> annotationSet = new HashSet<>();
         Set<String> keySet = beanContainer.keySet();

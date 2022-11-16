@@ -1,18 +1,15 @@
-package indiv.budin.ioc.test;
+package indiv.budin.ioc.simple.entity;
 
 import indiv.budin.ioc.annotations.IocComponent;
-import indiv.budin.ioc.annotations.IocService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
  * @author
  * @date 2022/11/15 20 19
  * discription
  */
-@IocComponent
 @NoArgsConstructor
 @Data
 @AllArgsConstructor

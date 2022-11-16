@@ -1,16 +1,9 @@
-package indiv.budin.ioc.test;
+package indiv.budin.ioc.simple.entity;
 
 import indiv.budin.ioc.annotations.IocAutowired;
-import indiv.budin.ioc.annotations.IocBean;
-import indiv.budin.ioc.annotations.IocComponent;
-import indiv.budin.ioc.annotations.IocScan;
-import indiv.budin.ioc.test.Address;
-import jdk.nashorn.internal.objects.annotations.Constructor;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author
@@ -18,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * discription
  */
 
-@IocComponent
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
