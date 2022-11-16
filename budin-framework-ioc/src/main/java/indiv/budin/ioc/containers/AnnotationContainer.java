@@ -68,7 +68,8 @@ public class AnnotationContainer implements IocContainer {
     public List<Class<?>> getClassesByInterface(Class<?> clazz) {
         List<Class<?>> interfaceClassSet = null;
         Set<String> keySet = beanContainer.keySet();
-        if (!clazz.isInterface()) {
+        if (clazz.isInterface()) {
+            if (keySet.size()==0) return null;
             interfaceClassSet = new ArrayList<>();
             for (String key : keySet) {
                 Class<?> keyClass = beanContainer.get(key).getClass();
@@ -108,9 +109,24 @@ public class AnnotationContainer implements IocContainer {
         return null;
     }
 
-    public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation) {
-        Set<Class<?>> annotationSet = new HashSet<>();
+    @Override
+    public Set<Class<?>> getAllClasses() {
+        Set<Class<?>> allClassSet;
         Set<String> keySet = beanContainer.keySet();
+        if (keySet.size() == 0) return null;
+        allClassSet = new HashSet<>();
+        for (String key : keySet) {
+            Class<?> clazz = beanContainer.get(key).getClass();
+            allClassSet.add(clazz);
+        }
+        return allClassSet;
+    }
+
+    public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation) {
+        Set<Class<?>> annotationSet;
+        Set<String> keySet = beanContainer.keySet();
+        if (keySet.size() == 0) return null;
+        annotationSet=new HashSet<>();
         for (String key : keySet) {
             Class<?> clazz = beanContainer.get(key).getClass();
             if (clazz.isAnnotationPresent(annotation)) {

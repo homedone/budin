@@ -15,10 +15,9 @@ import lombok.NoArgsConstructor;
  * discription
  */
 
-@Data
 @IocController
 public class UserController {
-    @IocAutowired
+//    @IocAutowired
     private UserService userService;
     public void register(String userName, String password, Address address){
         User user = new User(address, userName, password);
@@ -26,5 +25,14 @@ public class UserController {
     }
     public User getUser(String userName){
         return userService.getUser(userName);
+    }
+
+    @IocAutowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public UserService getUserService() {
+        return userService;
     }
 }

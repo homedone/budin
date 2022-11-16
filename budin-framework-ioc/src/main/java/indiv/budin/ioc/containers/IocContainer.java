@@ -19,4 +19,6 @@ public interface IocContainer {
     List<Class<?>> getClassesByInterface(Class<?> clazz);
 
     Map<String, Object> getBeanContainer();
+
+    Set<Class<?>> getAllClasses();
 }

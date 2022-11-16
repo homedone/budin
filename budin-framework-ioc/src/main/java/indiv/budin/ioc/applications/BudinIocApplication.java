@@ -6,6 +6,7 @@ import indiv.budin.ioc.containers.AnnotationContainer;
 import indiv.budin.ioc.containers.AnnotationDependencyInjector;
 import indiv.budin.ioc.containers.IocContainer;
 import indiv.budin.ioc.exceptions.ApplicationRunException;
+import indiv.budin.ioc.simple.controller.UserController;
 import indiv.budin.ioc.test.IocTest;
 import indiv.budin.ioc.utils.PackageUtil;
 import org.slf4j.Logger;
@@ -22,18 +23,25 @@ import java.util.Set;
 public class BudinIocApplication {
     static Logger logger = LoggerFactory.getLogger(BudinIocApplication.class);
 
+
     public static void run(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(IocApplication.class))
             throw new ApplicationRunException(ExceptionMessage.APPLICATION_RUN_EXCEPTION);
-        AnnotationDependencyInjector annotationDependencyInjector = new AnnotationDependencyInjector();
         String scanPath = clazz.getPackage().getName();
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
+        AnnotationDependencyInjector annotationDependencyInjector = new AnnotationDependencyInjector();
         IocContainer iocContainer= annotationDependencyInjector.getIocContainer();
         iocContainer.scan(packageClass);
-        for (String key :
-                iocContainer.getBeanContainer().keySet()) {
-            logger.info(key);
-        }
+        annotationDependencyInjector.inject();
+//        for (String key :
+//                iocContainer.getBeanContainer().keySet()) {
+//            Object obj=iocContainer.getBean(key);
+//            logger.info(obj.toString());
+//            if (obj instanceof UserController){
+//                UserController userController=(UserController) obj;
+//                logger.info(userController.getUserService().toString());
+//            }
+//        }
     }
 
 }

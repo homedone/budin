@@ -28,7 +28,9 @@ public class AnnotationDependencyInjector implements DependencyInjector {
 
     @Override
     public void inject() {
-
+        for (Class<?> clazz: iocContainer.getAllClasses()) {
+            setAttributionByAutowired(clazz);
+        }
     }
 
     public IocContainer getIocContainer() {
@@ -45,7 +47,6 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         if (!iocContainer.containsBean((clazz.getName()))) {
             throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
         }
-        System.out.println(clazz.getName());
         Object clazzObj = iocContainer.getBean(clazz.getName());
         for (Field field : clazz.getDeclaredFields()) {
             setAttributionByFieldAutowired(field, clazzObj);
@@ -71,7 +72,8 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         //如果不是一个接口，直接注入
         IocAutowired iocAutowired = field.getAnnotation(IocAutowired.class);
         String iocAutowiredName = iocAutowired.name();
-        Object obj = getObjectByTypeOrName(type);
+        Object obj = getObjectByType(type);
+        if (obj==null) obj = getByIocAutowiredName(iocAutowiredName);
         try {
             //只有属性为空时才注入
             if (field.get(clazzObj) == null) field.set(clazzObj, obj);
@@ -93,11 +95,9 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         IocAutowired iocAutowired = method.getAnnotation(IocAutowired.class);
         String iocAutowiredName = iocAutowired.name();
         //根据类型找bean
-        Object obj = getObjectByTypeOrName(type);
-        //如果没找到
-        if (obj==null){
-            obj=getByIocAutowiredName(iocAutowiredName);
-        }
+        Object obj = getObjectByType(type);
+        //如果没找到,根据名称找
+        if (obj==null) obj = getByIocAutowiredName(iocAutowiredName);
         try {
             String getMethodName = StringUtil.getPrefixMethod(type.getName(), "get");
             Method getMethod = clazz.getMethod(getMethodName);
@@ -108,7 +108,7 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         }
     }
 
-    public Object getObjectByTypeOrName(Class<?> type) {
+    public Object getObjectByType(Class<?> type) {
         String objKey;
         if (!type.isInterface()) {
             objKey = type.getName();
@@ -131,10 +131,10 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         return iocContainer.getBean(objKey);
     }
 
-    public String getByIocAutowiredName(String iocAutowiredName) {
+    public Object getByIocAutowiredName(String iocAutowiredName) {
         if (!iocContainer.containsBean(iocAutowiredName)) {
             throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
         }
-        return iocAutowiredName;
+        return iocContainer.getBean(iocAutowiredName);
     }
 }
