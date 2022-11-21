@@ -1,16 +1,21 @@
 package indiv.budin.ioc.containers;
 
 import indiv.budin.ioc.annotations.IocAutowired;
+import indiv.budin.ioc.annotations.IocConfiguration;
 import indiv.budin.ioc.constants.ExceptionMessage;
 import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NotFindClassException;
 import indiv.budin.ioc.utils.ClassUtil;
 import indiv.budin.ioc.utils.StringUtil;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,20 +26,50 @@ import java.util.Set;
 public class AnnotationDependencyInjector implements DependencyInjector {
     private IocContainer iocContainer;
 
+    private Map<String, String> yamlMap;
+
     public AnnotationDependencyInjector() {
         this.iocContainer = AnnotationContainer.getInstance();
     }
 
+    public static DependencyInjector creator() {
+        return new AnnotationDependencyInjector();
+    }
+
+    public DependencyInjector scan(Set<Class<?>> packageClass) {
+        iocContainer.scan(packageClass);
+        return this;
+    }
+
 
     @Override
-    public void inject() {
-        for (Class<?> clazz: iocContainer.getAllClasses()) {
+    public DependencyInjector inject() {
+        for (Class<?> clazz : iocContainer.getAllClasses()) {
             setAttributionByAutowired(clazz);
         }
+        return this;
+    }
+
+    private InputStream getYamlStream() {
+        return this.getClass().getClassLoader().getResourceAsStream("application.yml");
+
     }
 
     public IocContainer getIocContainer() {
         return iocContainer;
+    }
+
+    public void setAttributionByConfiguration(Class<?> clazz) {
+        if (!clazz.isAnnotationPresent(IocConfiguration.class)) {
+            return;
+        }
+        if (!iocContainer.containsBean((clazz.getName()))) {
+            throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
+        }
+        Object clazzObj = iocContainer.getBean(clazz.getName());
+        IocConfiguration annotation = clazz.getAnnotation(IocConfiguration.class);
+        String prefix = annotation.prefix();
+
     }
 
     /**
@@ -43,6 +78,7 @@ public class AnnotationDependencyInjector implements DependencyInjector {
      *
      * @param clazz
      */
+
     public void setAttributionByAutowired(Class<?> clazz) {
         if (!iocContainer.containsBean((clazz.getName()))) {
             throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
@@ -73,7 +109,7 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         IocAutowired iocAutowired = field.getAnnotation(IocAutowired.class);
         String iocAutowiredName = iocAutowired.name();
         Object obj = getObjectByType(type);
-        if (obj==null) obj = getByIocAutowiredName(iocAutowiredName);
+        if (obj == null) obj = getByIocAutowiredName(iocAutowiredName);
         try {
             //只有属性为空时才注入
             if (field.get(clazzObj) == null) field.set(clazzObj, obj);
@@ -97,7 +133,7 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         //根据类型找bean
         Object obj = getObjectByType(type);
         //如果没找到,根据名称找
-        if (obj==null) obj = getByIocAutowiredName(iocAutowiredName);
+        if (obj == null) obj = getByIocAutowiredName(iocAutowiredName);
         try {
             String getMethodName = StringUtil.getPrefixMethod(type.getName(), "get");
             Method getMethod = clazz.getMethod(getMethodName);

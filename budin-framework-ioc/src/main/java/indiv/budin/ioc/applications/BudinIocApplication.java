@@ -4,6 +4,7 @@ import indiv.budin.ioc.annotations.IocApplication;
 import indiv.budin.ioc.constants.ExceptionMessage;
 import indiv.budin.ioc.containers.AnnotationContainer;
 import indiv.budin.ioc.containers.AnnotationDependencyInjector;
+import indiv.budin.ioc.containers.DependencyInjector;
 import indiv.budin.ioc.containers.IocContainer;
 import indiv.budin.ioc.exceptions.ApplicationRunException;
 import indiv.budin.ioc.simple.controller.UserController;
@@ -29,10 +30,8 @@ public class BudinIocApplication {
             throw new ApplicationRunException(ExceptionMessage.APPLICATION_RUN_EXCEPTION);
         String scanPath = clazz.getPackage().getName();
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
-        AnnotationDependencyInjector annotationDependencyInjector = new AnnotationDependencyInjector();
+        DependencyInjector annotationDependencyInjector = AnnotationDependencyInjector.creator().scan(packageClass).inject();
         IocContainer iocContainer= annotationDependencyInjector.getIocContainer();
-        iocContainer.scan(packageClass);
-        annotationDependencyInjector.inject();
 //        for (String key :
 //                iocContainer.getBeanContainer().keySet()) {
 //            Object obj=iocContainer.getBean(key);
