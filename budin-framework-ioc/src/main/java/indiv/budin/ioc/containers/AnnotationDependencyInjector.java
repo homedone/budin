@@ -7,15 +7,16 @@ import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NotFindClassException;
 import indiv.budin.ioc.utils.ClassUtil;
 import indiv.budin.ioc.utils.StringUtil;
+import indiv.budin.ioc.utils.YamlUtil;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -25,40 +26,45 @@ import java.util.Set;
  */
 public class AnnotationDependencyInjector implements DependencyInjector {
     private IocContainer iocContainer;
-
-    private Map<String, String> yamlMap;
+    private Map<String, Object> yamlMap;
 
     public AnnotationDependencyInjector() {
         this.iocContainer = AnnotationContainer.getInstance();
     }
 
-    public static DependencyInjector creator() {
+    public static AnnotationDependencyInjector creator() {
         return new AnnotationDependencyInjector();
     }
 
-    public DependencyInjector scan(Set<Class<?>> packageClass) {
+    public AnnotationDependencyInjector scan(Set<Class<?>> packageClass) {
         iocContainer.scan(packageClass);
         return this;
     }
 
-
-    @Override
-    public DependencyInjector inject() {
-        for (Class<?> clazz : iocContainer.getAllClasses()) {
-            setAttributionByAutowired(clazz);
-        }
+    public DependencyInjector config(Map config) {
+        yamlMap = config;
         return this;
     }
 
-    private InputStream getYamlStream() {
-        return this.getClass().getClassLoader().getResourceAsStream("application.yml");
-
+    @Override
+    public AnnotationDependencyInjector inject() {
+        for (Class<?> clazz : iocContainer.getAllClasses()) {
+            setAttributionByConfiguration(clazz);
+            setAttributionByAutowired(clazz);
+        }
+        return this;
     }
 
     public IocContainer getIocContainer() {
         return iocContainer;
     }
 
+
+    /**
+     * 通过yaml配置注入
+     *
+     * @param clazz
+     */
     public void setAttributionByConfiguration(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(IocConfiguration.class)) {
             return;
@@ -69,7 +75,19 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         Object clazzObj = iocContainer.getBean(clazz.getName());
         IocConfiguration annotation = clazz.getAnnotation(IocConfiguration.class);
         String prefix = annotation.prefix();
-
+        Map objectMap = YamlUtil.getObjectMapByPrefix(yamlMap, prefix);
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                if (!objectMap.containsKey(fieldName)) continue;
+                Object fieldObj = objectMap.get(fieldName);
+//                Object obj = ClassUtil.stringToTarget(String.valueOf(fieldObj), field.getType());
+                field.set(clazzObj, fieldObj);
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

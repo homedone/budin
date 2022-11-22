@@ -15,5 +15,5 @@ public interface DependencyInjector {
 
     DependencyInjector scan(Set<Class<?>> packageClass);
 
-    public IocContainer getIocContainer();
+
 }
