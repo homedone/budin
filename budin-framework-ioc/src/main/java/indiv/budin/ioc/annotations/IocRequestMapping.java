@@ -6,7 +6,7 @@ import java.lang.annotation.*;
 @Target(ElementType.METHOD)
 @Documented
 public @interface IocRequestMapping {
-    String Url() default "";
+    String url() default "";
 
-    String method() default "get";
+    String method() default "post";
 }

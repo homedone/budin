@@ -1,2 +1,10 @@
-package indiv.budin.ioc.annotations;public @interface IocRequestParam {
+package indiv.budin.ioc.annotations;
+
+import java.lang.annotation.*;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+@Documented
+public @interface IocRequestParam {
+    String value() default "";
 }

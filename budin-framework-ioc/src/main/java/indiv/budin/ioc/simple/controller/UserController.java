@@ -2,6 +2,8 @@ package indiv.budin.ioc.simple.controller;
 
 import indiv.budin.ioc.annotations.IocAutowired;
 import indiv.budin.ioc.annotations.IocController;
+import indiv.budin.ioc.annotations.IocRequestMapping;
+import indiv.budin.ioc.annotations.IocRequestParam;
 import indiv.budin.ioc.simple.service.api.UserService;
 import indiv.budin.ioc.simple.entity.Address;
 import indiv.budin.ioc.simple.entity.User;
@@ -17,17 +19,23 @@ import lombok.NoArgsConstructor;
 
 @IocController
 public class UserController {
-//    @IocAutowired
+    //    @IocAutowired
     private UserService userService;
-    public void register(String userName, String password, Address address){
+
+    @IocRequestMapping(url = "/simple/register")
+    public void register(@IocRequestParam(value = "name") String userName, @IocRequestParam(value = "pass") String password) {
+        Address address=new Address("jx","px","ay");
+        System.out.println("收到");
         User user = new User(address, userName, password);
         userService.addUser(user);
     }
-    public User getUser(String userName){
+
+    @IocRequestMapping(url = "/simple/get")
+    public User getUser(@IocRequestParam(value = "name") String userName) {
         return userService.getUser(userName);
     }
 
-    @IocAutowired
+    @IocAutowired()
     public void setUserService(UserService userService) {
         this.userService = userService;
     }

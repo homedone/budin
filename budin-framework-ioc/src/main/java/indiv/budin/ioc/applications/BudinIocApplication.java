@@ -5,6 +5,7 @@ import indiv.budin.ioc.constants.ExceptionMessage;
 import indiv.budin.ioc.containers.AnnotationDependencyInjector;
 import indiv.budin.ioc.containers.DependencyInjector;
 import indiv.budin.ioc.containers.IocContainer;
+import indiv.budin.ioc.containers.WebContainer;
 import indiv.budin.ioc.exceptions.ApplicationRunException;
 import indiv.budin.ioc.utils.PackageUtil;
 import indiv.budin.ioc.utils.YamlUtil;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.servlet.http.HttpServlet;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
@@ -25,17 +27,28 @@ import java.util.Set;
 public class BudinIocApplication {
     static Logger logger = LoggerFactory.getLogger(BudinIocApplication.class);
 
+    TomcatServer tomcatServer;
+
     public static void run(Class<?> clazz) {
+        BudinIocApplication budinIocApplication = new BudinIocApplication();
         if (!clazz.isAnnotationPresent(IocApplication.class))
             throw new ApplicationRunException(ExceptionMessage.APPLICATION_RUN_EXCEPTION);
+        //扫包
         String scanPath = clazz.getPackage().getName();
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
         Map<String, Object> yamlMap = YamlUtil.getYamlMap(clazz, "application.yml");
+        //容器bean生成，依赖关系注入
         DependencyInjector annotationDependencyInjector = AnnotationDependencyInjector.creator().config(yamlMap).scan(packageClass).inject();
-
+        //注入servlet容器
+        HttpServlet webServlet = WebContainer.create().build();
+        //服务配置，web服务器启动
         Map tomcatConfig = YamlUtil.getObjectMapByPrefix(yamlMap, "budin.server");
-        
-        TomcatServer.create().config(tomcatConfig).build();
+        String baseDir = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+        tomcatConfig.put("baseDir", baseDir.substring(1,baseDir.length()-1));
+        budinIocApplication.tomcatServer = TomcatServer.create().config(tomcatConfig);
+        budinIocApplication.tomcatServer.addServlet(clazz.getName(), webServlet).build();
+
+
 //        IocContainer iocContainer = annotationDependencyInjector.getIocContainer();
 //        for (String key : iocContainer.getBeanContainer().keySet()) {
 //            Object obj=iocContainer.getBean(key);

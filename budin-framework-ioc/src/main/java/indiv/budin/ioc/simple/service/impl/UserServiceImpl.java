@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUser(User user) {
+        System.out.println(user.getUserName());
         users.put(user.getUserName(),user);
     }
 
