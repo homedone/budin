@@ -24,7 +24,7 @@ public class UserController {
 
     @IocRequestMapping(url = "/simple/register")
     public void register(@IocRequestParam(value = "name") String userName, @IocRequestParam(value = "pass") String password) {
-        Address address=new Address("jx","px","ay");
+        Address address = new Address("jx", "px", "ay");
         System.out.println("收到");
         User user = new User(address, userName, password);
         userService.addUser(user);
@@ -42,5 +42,8 @@ public class UserController {
 
     public UserService getUserService() {
         return userService;
+    }
+    public void introduce(){
+
     }
 }

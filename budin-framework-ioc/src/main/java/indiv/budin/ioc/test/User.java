@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements People{
 
     @IocAutowired
     private Address address;
@@ -33,8 +33,12 @@ public class User {
         return "i am a user";
     }
 
+    public String pay(int k) {
+        return "pay " + k + " yuan";
+    }
+
     @IocAutowired
-    public void setAddress(Address address){
-        this.address=address;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

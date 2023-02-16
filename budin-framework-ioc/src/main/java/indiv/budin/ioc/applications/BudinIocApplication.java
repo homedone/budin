@@ -2,10 +2,7 @@ package indiv.budin.ioc.applications;
 
 import indiv.budin.ioc.annotations.IocApplication;
 import indiv.budin.ioc.constants.ExceptionMessage;
-import indiv.budin.ioc.containers.AnnotationDependencyInjector;
-import indiv.budin.ioc.containers.DependencyInjector;
-import indiv.budin.ioc.containers.IocContainer;
-import indiv.budin.ioc.containers.WebContainer;
+import indiv.budin.ioc.containers.*;
 import indiv.budin.ioc.exceptions.ApplicationRunException;
 import indiv.budin.ioc.utils.PackageUtil;
 import indiv.budin.ioc.utils.YamlUtil;
@@ -38,9 +35,11 @@ public class BudinIocApplication {
         Set<Class<?>> packageClass = PackageUtil.getPackageClass(scanPath);
         Map<String, Object> yamlMap = YamlUtil.getYamlMap(clazz, "application.yml");
         //容器bean生成，依赖关系注入
-        DependencyInjector annotationDependencyInjector = AnnotationDependencyInjector.creator().config(yamlMap).scan(packageClass).inject();
+//        DependencyInjector annotationDependencyInjector = AnnotationDependencyInjector.creator().config(yamlMap).scan(packageClass).inject();
+        DependencyInjector annotationDependencyInjector = ProxyDependencyInjector.creator().config(yamlMap).scan(packageClass).inject();
         //注入servlet容器
-        HttpServlet webServlet = WebContainer.create().build();
+//        HttpServlet webServlet = WebContainer.create().build();
+        HttpServlet webServlet = WebProxyContainer.create().build();
         //服务配置，web服务器启动
         Map tomcatConfig = YamlUtil.getObjectMapByPrefix(yamlMap, "budin.server");
         String baseDir = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();

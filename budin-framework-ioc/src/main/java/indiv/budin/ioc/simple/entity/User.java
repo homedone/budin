@@ -1,5 +1,6 @@
 package indiv.budin.ioc.simple.entity;
 
+import com.beust.ah.A;
 import indiv.budin.ioc.annotations.IocAutowired;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +26,13 @@ public class User {
         return "i am a user";
     }
 
+
     @IocAutowired
     public void setAddress(Address address){
         this.address=address;
     }
+
 }
+
+
+

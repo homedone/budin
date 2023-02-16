@@ -24,19 +24,22 @@ import java.util.Set;
  * @date 2022/11/16 20 26
  * discription
  */
-public class AnnotationDependencyInjector implements DependencyInjector {
+public class ProxyDependencyInjector implements DependencyInjector {
+    private ProxyContainer proxyContainer;
+
     private IocContainer iocContainer;
     private Map<String, Object> yamlMap;
 
-    public AnnotationDependencyInjector() {
-        this.iocContainer = AnnotationContainer.getInstance();
+    public ProxyDependencyInjector() {
+        iocContainer=AnnotationContainer.getInstance();
+        proxyContainer = ProxyContainer.getInstance();
     }
 
-    public static AnnotationDependencyInjector creator() {
-        return new AnnotationDependencyInjector();
+    public static ProxyDependencyInjector creator() {
+        return new ProxyDependencyInjector();
     }
 
-    public AnnotationDependencyInjector scan(Set<Class<?>> packageClass) {
+    public ProxyDependencyInjector scan(Set<Class<?>> packageClass) {
         iocContainer.scan(packageClass);
         return this;
     }
@@ -47,7 +50,9 @@ public class AnnotationDependencyInjector implements DependencyInjector {
     }
 
     @Override
-    public AnnotationDependencyInjector inject() {
+    public ProxyDependencyInjector inject() {
+        proxyContainer.injectProxy();
+        proxyContainer.doProxy();
         for (Class<?> clazz : iocContainer.getAllClasses()) {
             setAttributionByConfiguration(clazz);
             setAttributionByAutowired(clazz);
@@ -57,6 +62,14 @@ public class AnnotationDependencyInjector implements DependencyInjector {
 
     public IocContainer getIocContainer() {
         return iocContainer;
+    }
+
+    Object getBean(String s){
+        Object obj = proxyContainer.getBean(s);
+        if (obj==null){
+            obj=iocContainer.getBean(s);
+        }
+        return obj;
     }
 
     /**
@@ -71,7 +84,7 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         if (!iocContainer.containsBean((clazz.getName()))) {
             throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
         }
-        Object clazzObj = iocContainer.getBean(clazz.getName());
+        Object clazzObj = this.getBean(clazz.getName());
         IocConfiguration annotation = clazz.getAnnotation(IocConfiguration.class);
         String prefix = annotation.prefix();
         Map objectMap = YamlUtil.getObjectMapByPrefix(yamlMap, prefix);
@@ -100,7 +113,7 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         if (!iocContainer.containsBean((clazz.getName()))) {
             throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
         }
-        Object clazzObj = iocContainer.getBean(clazz.getName());
+        Object clazzObj = this.getBean(clazz.getName());
         for (Field field : clazz.getDeclaredFields()) {
             setAttributionByFieldAutowired(field, clazzObj);
         }
@@ -181,13 +194,13 @@ public class AnnotationDependencyInjector implements DependencyInjector {
         } else {
             return null;
         }
-        return iocContainer.getBean(objKey);
+        return this.getBean(objKey);
     }
 
     public Object getByIocAutowiredName(String iocAutowiredName) {
         if (!iocContainer.containsBean(iocAutowiredName)) {
             throw new NoBeanException(ExceptionMessage.NO_BEAN_EXCEPTION);
         }
-        return iocContainer.getBean(iocAutowiredName);
+        return this.getBean(iocAutowiredName);
     }
 }
