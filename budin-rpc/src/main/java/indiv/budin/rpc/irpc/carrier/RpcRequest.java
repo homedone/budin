@@ -14,12 +14,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString
 public class RpcRequest implements Serializable {
-    private int messageId;
+    private String messageId;
     private String methodName;
+    private String interfaceName;
     private Object[] parameters;
     private Class<?>[] paramTypes;
     private String messageVersion;
-    private String group;
-
+    private String serviceName;
+    private String nodeName;
+    public String getServiceNameWithNode(){
+        return getServiceName()+"."+getNodeName();
+    }
 
 }

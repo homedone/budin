@@ -5,36 +5,38 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import indiv.budin.rpc.irpc.center.base.RegistryCenter;
-import indiv.budin.rpc.irpc.exception.NacosDiscoveryException;
-import indiv.budin.rpc.irpc.exception.NacosRegistryException;
+import indiv.budin.rpc.irpc.exception.RpcDiscoveryException;
+import indiv.budin.rpc.irpc.exception.RpcRegistryException;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 
 public class NacosRegistryCenter implements RegistryCenter {
-    private final static String DEFAULT_NACOS_CENTER_ADDRESS="127.0.0.1:9019";
-    private static volatile NamingService namingService;
+    private final static String DEFAULT_NACOS_CENTER_ADDRESS="127.0.0.1:9119";
+    private NamingService namingService;
+    private static volatile NacosRegistryCenter nacosRegistryCenter;
 
-    public NacosRegistryCenter() {
-        getNacosService(DEFAULT_NACOS_CENTER_ADDRESS);
+    private NacosRegistryCenter() {
+
     }
 
-    public NacosRegistryCenter(String address) {
-        getNacosService(address);
+    public static NacosRegistryCenter getInstance(){
+        return getInstance(DEFAULT_NACOS_CENTER_ADDRESS);
     }
-    NamingService getNacosService(String address){
-        if (namingService==null){
+    public static NacosRegistryCenter getInstance(String address){
+        if (nacosRegistryCenter==null){
             synchronized (RegistryCenter.class){
-                if (namingService==null){
+                if (nacosRegistryCenter==null){
                     try {
-                        namingService = NamingFactory.createNamingService(address);
+                        nacosRegistryCenter = new NacosRegistryCenter();
+                        nacosRegistryCenter.namingService= NamingFactory.createNamingService(address);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }
             }
         }
-        return namingService;
+        return nacosRegistryCenter;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class NacosRegistryCenter implements RegistryCenter {
         try {
             namingService.registerInstance(serviceName, inetSocketAddress.getHostName(), inetSocketAddress.getPort());
         } catch (NacosException e) {
-            throw new NacosRegistryException(" <NACOS> server register fail");
+            throw new RpcRegistryException(" <NACOS> server register fail");
         }
     }
 
@@ -53,7 +55,7 @@ public class NacosRegistryCenter implements RegistryCenter {
             Instance instance = instances.get(0);
             return new InetSocketAddress(instance.getIp(), instance.getPort());
         } catch (NacosException e) {
-            throw new NacosDiscoveryException(" <NACOS> server discovery fail");
+            throw new RpcDiscoveryException(" <NACOS> server discovery fail");
         }
     }
 

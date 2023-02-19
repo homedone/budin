@@ -36,8 +36,9 @@ public class BudinIocApplication {
         Map<String, Object> yamlMap = YamlUtil.getYamlMap(clazz, "application.yml");
         //容器bean生成，依赖关系注入
 //        DependencyInjector annotationDependencyInjector = AnnotationDependencyInjector.creator().config(yamlMap).scan(packageClass).inject();
+        //代理容器注入器
         DependencyInjector annotationDependencyInjector = ProxyDependencyInjector.creator().config(yamlMap).scan(packageClass).inject();
-        //注入servlet容器
+        //servlet容器
 //        HttpServlet webServlet = WebContainer.create().build();
         HttpServlet webServlet = WebProxyContainer.create().build();
         //服务配置，web服务器启动
@@ -46,17 +47,6 @@ public class BudinIocApplication {
         tomcatConfig.put("baseDir", baseDir.substring(1,baseDir.length()-1));
         budinIocApplication.tomcatServer = TomcatServer.create().config(tomcatConfig);
         budinIocApplication.tomcatServer.addServlet(clazz.getName(), webServlet).build();
-
-
-//        IocContainer iocContainer = annotationDependencyInjector.getIocContainer();
-//        for (String key : iocContainer.getBeanContainer().keySet()) {
-//            Object obj=iocContainer.getBean(key);
-//            logger.info(obj.toString());
-//            if (obj instanceof UserController){
-//                UserController userController=(UserController) obj;
-//                logger.info(userController.getUserService().toString());
-//            }
-//        }
     }
 
 }

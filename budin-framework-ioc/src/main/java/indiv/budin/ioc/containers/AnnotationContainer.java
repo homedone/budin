@@ -135,4 +135,17 @@ public class AnnotationContainer implements IocContainer {
         }
         return annotationSet;
     }
+    public Set<String> getKeyByAnnotation(Class<? extends Annotation> annotation) {
+        Set<String> annotationSet;
+        Set<String> keySet = beanContainer.keySet();
+        if (keySet.size() == 0) return null;
+        annotationSet=new HashSet<>();
+        for (String key : keySet) {
+            Class<?> clazz = beanContainer.get(key).getClass();
+            if (clazz.isAnnotationPresent(annotation)) {
+                annotationSet.add(key);
+            }
+        }
+        return annotationSet;
+    }
 }
