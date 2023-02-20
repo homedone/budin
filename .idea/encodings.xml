@@ -9,6 +9,9 @@
     <file url="file://$PROJECT_DIR$/budin-file-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-framework-ioc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/budin-rpc-client-demo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/budin-rpc-server-demo-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/budin-rpc-server-demo/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-rpc/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-server-center-eureka/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/budin-user-center/src/main/java" charset="UTF-8" />

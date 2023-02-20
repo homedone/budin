@@ -45,9 +45,9 @@ public class RpcProxyContainer {
                     serviceConfig.setVersion(rpcAutowire.version());
                     serviceConfig.setNodeName(rpcAutowire.node());
 
-
                     ClientProxy clientProxy = new ClientProxy(client, serviceConfig);
                     Object proxyObject = clientProxy.getProxyInstance(field.getType());
+                    field.setAccessible(true);
                     try {
                         field.set(obj, proxyObject);
                     } catch (Exception e) {

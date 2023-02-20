@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="budin-framework-ioc" />
+        <module name="budin-rpc-server-demo" />
         <module name="budin-rpc" />
         <module name="budin-server-center-eureka" />
         <module name="budin-gateway" />
@@ -15,10 +16,13 @@
         <module name="budin-file-service" />
         <module name="budin-user-center" />
         <module name="budin-entity" />
+        <module name="budin-rpc-server-demo-api" />
+        <module name="budin-rpc-client-demo" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="budin-grpc" target="1.8" />
+      <module name="budin-rpc-server-demo" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -29,6 +33,9 @@
       <module name="budin-framework-ioc" options="-parameters" />
       <module name="budin-gateway" options="-parameters" />
       <module name="budin-rpc" options="-parameters" />
+      <module name="budin-rpc-client-demo" options="-parameters" />
+      <module name="budin-rpc-server-demo" options="-parameters" />
+      <module name="budin-rpc-server-demo-api" options="-parameters" />
       <module name="budin-server-center-eureka" options="-parameters" />
       <module name="budin-user-center" options="-parameters" />
     </option>

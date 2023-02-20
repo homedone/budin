@@ -17,6 +17,9 @@
         <module>budin-server-center-eureka</module>
         <module>budin-rpc</module>
         <module>budin-framework-ioc</module>
+        <module>budin-rpc-client-demo</module>
+        <module>budin-rpc-server-demo</module>
+        <module>budin-rpc-server-demo-api</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -1,18 +1,21 @@
 package indiv.budin.rpc.irpc.center.nacos;
 
-import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import indiv.budin.rpc.irpc.center.base.RegistryCenter;
 import indiv.budin.rpc.irpc.exception.RpcDiscoveryException;
 import indiv.budin.rpc.irpc.exception.RpcRegistryException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;
 
 public class NacosRegistryCenter implements RegistryCenter {
-    private final static String DEFAULT_NACOS_CENTER_ADDRESS="127.0.0.1:9119";
+
+    Logger logger= LoggerFactory.getLogger(NacosRegistryCenter.class);
+    private final static String DEFAULT_NACOS_CENTER_ADDRESS="127.0.0.1:8848";
     private NamingService namingService;
     private static volatile NacosRegistryCenter nacosRegistryCenter;
 
@@ -42,8 +45,10 @@ public class NacosRegistryCenter implements RegistryCenter {
     @Override
     public void register(String serviceName, InetSocketAddress inetSocketAddress) {
         try {
+            logger.info("serviceName: "+serviceName+" ip: "+inetSocketAddress.getHostName()+"::"+inetSocketAddress.getPort());
             namingService.registerInstance(serviceName, inetSocketAddress.getHostName(), inetSocketAddress.getPort());
-        } catch (NacosException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new RpcRegistryException(" <NACOS> server register fail");
         }
     }
@@ -51,10 +56,11 @@ public class NacosRegistryCenter implements RegistryCenter {
     @Override
     public InetSocketAddress discovery(String serviceName) {
         try {
+            logger.info(serviceName);
             List<Instance> instances = namingService.getAllInstances(serviceName);
             Instance instance = instances.get(0);
             return new InetSocketAddress(instance.getIp(), instance.getPort());
-        } catch (NacosException e) {
+        } catch (Exception e) {
             throw new RpcDiscoveryException(" <NACOS> server discovery fail");
         }
     }

@@ -16,6 +16,8 @@ import indiv.budin.rpc.irpc.carrier.ServiceConfig;
 import indiv.budin.rpc.irpc.center.base.ServiceCenter;
 import indiv.budin.rpc.irpc.center.nacos.NacosServiceCenter;
 import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
@@ -32,13 +34,18 @@ import java.util.Set;
  * @date 2022/11/16 20 26
  * discription
  */
-public class RpcProxyDependencyInjector implements DependencyInjector {
+public class RpcProxyDependencyInjector implements DependencyInjector{
+
+    Logger logger= LoggerFactory.getLogger(RpcProxyDependencyInjector.class);
     private RpcProxyContainer rpcProxyContainer;
 
     private IocContainer iocContainer;
     private Map<String, Object> yamlMap;
     private final ServiceCenter serviceCenter;
 
+    public RpcProxyContainer getRpcProxyContainer() {
+        return rpcProxyContainer;
+    }
 
     public RpcProxyDependencyInjector() {
         iocContainer= AnnotationContainer.getInstance();
@@ -46,8 +53,8 @@ public class RpcProxyDependencyInjector implements DependencyInjector {
         serviceCenter=(NacosServiceCenter) FactoryUtil.getSingletonInstance(NacosServiceCenter.class);
     }
 
-    public static indiv.budin.ioc.containers.ProxyDependencyInjector creator() {
-        return new indiv.budin.ioc.containers.ProxyDependencyInjector();
+    public static RpcProxyDependencyInjector creator() {
+        return new RpcProxyDependencyInjector();
     }
 
     public RpcProxyDependencyInjector scan(Set<Class<?>> packageClass) {
@@ -55,7 +62,7 @@ public class RpcProxyDependencyInjector implements DependencyInjector {
         return this;
     }
 
-    public DependencyInjector config(Map config) {
+    public RpcProxyDependencyInjector config(Map config) {
         yamlMap = config;
         return this;
     }
@@ -72,19 +79,25 @@ public class RpcProxyDependencyInjector implements DependencyInjector {
                 serviceConfig.setNodeName(rpcAutowire.node());
                 serviceConfig.setHost(String.valueOf(ip.get("host")));
                 serviceConfig.setPort((Integer) ip.get("port"));
+                logger.info(serviceConfig.toString());
                 Object service=iocContainer.getBean(clazz.getName());
                 serviceCenter.addService(serviceConfig,service);
             }
         }
     }
-
-    @Override
-    public RpcProxyDependencyInjector inject() {
+    public RpcProxyDependencyInjector injectProxy(){
         rpcProxyContainer.injectProxy();
+        return this;
+    }
+
+
+    public RpcProxyDependencyInjector inject() {
+        injectProxy();
         for (Class<?> clazz : iocContainer.getAllClasses()) {
             setAttributionByConfiguration(clazz);
             setAttributionByAutowired(clazz);
         }
+        injectToCenter();
         return this;
     }
 
@@ -92,7 +105,7 @@ public class RpcProxyDependencyInjector implements DependencyInjector {
         return iocContainer;
     }
 
-    Object getBean(String s){
+    public Object getBean(String s){
         Object obj = rpcProxyContainer.getBean(s);
         if (obj==null){
             obj=iocContainer.getBean(s);

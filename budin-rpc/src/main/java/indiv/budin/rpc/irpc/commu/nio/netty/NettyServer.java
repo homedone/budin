@@ -1,6 +1,7 @@
 package indiv.budin.rpc.irpc.commu.nio.netty;
 
 
+import indiv.budin.ioc.annotations.IocComponent;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -9,6 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.net.InetAddress;
 
+@IocComponent
 public class NettyServer {
     /**
      * 绑定一个端口，并启动一个netty服务,采用主从Reactor,boss负责连接channel,worker负责处理事件

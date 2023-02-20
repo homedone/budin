@@ -49,7 +49,7 @@ public class NettyClient implements Client {
                             socketChannel.pipeline()
                                     .addLast(new Encoder())
                                     .addLast(new Decoder())
-                                    .addLast(new SimpleNettyServerHandler());
+                                    .addLast(new SimpleNettyClientHandler());
                         }
                     });
         } catch (Exception e) {
@@ -84,16 +84,22 @@ public class NettyClient implements Client {
     public Object sendObject(Object message, byte serializerType) {
         if (message instanceof RpcRequest) {
             RpcRequest request = (RpcRequest) message;
+            logger.info(request.toString());
             InetSocketAddress inetSocketAddress = registryCenter.discovery(request.getServiceNameWithNode());
-            SocketChannel channel = connect(inetSocketAddress);
+            logger.info(inetSocketAddress.getHostName()+"."+inetSocketAddress.getPort());
             RpcMessage rpcMessage = new RpcMessage();
             rpcMessage.setData(request);
             rpcMessage.setMessageType(MessageType.REQUEST.getType());
             rpcMessage.setMessageId(atomicInteger.incrementAndGet());
             rpcMessage.setSerializerType(serializerType);
+            logger.info(rpcMessage.toString());
+            Channel channel = connect(inetSocketAddress);
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) fu -> {
                 if (!fu.isSuccess()) {
-                    logger.error("send message fail");
+                    logger.error("send message fail as "+fu.cause());
+                    fu.channel().close();
+                }else {
+                    logger.info("send message success");
                 }
             });
         }

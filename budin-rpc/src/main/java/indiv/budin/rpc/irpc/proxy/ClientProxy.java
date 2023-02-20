@@ -30,14 +30,14 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
 
     public Object getProxyInstance(Class<?> clazz) {
         Class<?>[] interfaces = clazz.getInterfaces();
-        if (interfaces.length == 0) {
-            return getProxyInstanceByCglib(clazz);
+        if (interfaces.length > 0 || clazz.isInterface()) {
+            return getProxyInstanceByJDK(clazz);
         }
-        return getProxyInstanceByJDK(clazz);
+        return getProxyInstanceByCglib(clazz);
     }
 
     Object getProxyInstanceByJDK(Class<?> clazz) {
-        return Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{clazz}, this);
+        return Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[]{clazz}, this);
     }
 
     Object getProxyInstanceByCglib(Class<?> clazz) {
@@ -50,16 +50,17 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return invoke(proxy.getClass().getName(),method,args);
+        return invokes(method.getDeclaringClass().getName(),args,method);
     }
 
-    public Object invoke(String interfaceName,Object[] args,Method method){
+    public Object invokes(String interfaceName,Object[] args,Method method){
+        logger.info(interfaceName+"  "+ method.getName());
         RpcRequest request=new RpcRequest();
         request.setInterfaceName(interfaceName);
         request.setMessageVersion(serviceConfig.getVersion());
         request.setMessageId(UuidUtil.makeUuid());
         request.setMethodName(method.getName());
-        request.setParameters(method.getParameters());
+        request.setParameters(args);
         request.setParamTypes(method.getParameterTypes());
         request.setNodeName(serviceConfig.getNodeName());
         request.setServiceName(serviceConfig.getServiceName());
@@ -67,6 +68,7 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
             Object obj = client.sendObject(request);
             return obj;
         }catch (Exception e){
+            e.printStackTrace();
             logger.error("client proxy fail");
             throw new ProxyException();
         }
@@ -74,6 +76,6 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        return invoke(o.getClass().getName(),method,objects);
+        return invokes(method.getDeclaringClass().getName(),objects,method);
     }
 }
