@@ -21,19 +21,20 @@ public class KryoSerializerTest {
         KryoThreadSerializer kryoThreadSerializer = new KryoThreadSerializer();
         RpcRequest rpcRequest = new RpcRequest();
         RpcResponse response=RpcResponse.fail();
-        byte[] serialize = kryoThreadSerializer.serialize(response);
+        byte[] serialize = kryoThreadSerializer.serialize(rpcRequest);
         logger.info(Arrays.toString(serialize));
-        RpcResponse deserialize = (RpcResponse) kryoThreadSerializer.deserialize(serialize, RpcResponse.class);
+        RpcRequest deserialize = (RpcRequest) kryoThreadSerializer.deserialize(serialize, RpcResponse.class);
         logger.info(deserialize.toString());
     }
     @Test
     public void kryoPoolSerializerTest(){
         KryoPoolSerializer kryoPoolSerializer = new KryoPoolSerializer();
         RpcRequest rpcRequest = new RpcRequest();
+        rpcRequest.setNodeName("aaa");
         RpcResponse response=RpcResponse.fail();
-        byte[] serialize = kryoPoolSerializer.serialize(response);
+        byte[] serialize = kryoPoolSerializer.serialize(rpcRequest);
         logger.info(Arrays.toString(serialize));
-        RpcResponse deserialize = (RpcResponse) kryoPoolSerializer.deserialize(serialize, RpcResponse.class);
+        RpcRequest deserialize = (RpcRequest) kryoPoolSerializer.deserialize(serialize, RpcRequest.class);
         logger.info(deserialize.toString());
     }
 

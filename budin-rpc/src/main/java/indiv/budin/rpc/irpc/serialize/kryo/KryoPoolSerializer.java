@@ -33,8 +33,8 @@ public class KryoPoolSerializer implements BaseSerializer {
             @Override
             protected Kryo create() {
                 Kryo kryo = new Kryo();
-                kryo.setRegistrationRequired(true);
-                kryo.setReferences(false);
+                kryo.setRegistrationRequired(false);
+                kryo.setReferences(true);
                 kryo.register(RpcRequest.class);
                 kryo.register(RpcResponse.class);
                 return kryo;
@@ -75,8 +75,7 @@ public class KryoPoolSerializer implements BaseSerializer {
             Input input = inputPool.obtain();
             Kryo kryo = kryoPool.obtain();
             input.setBuffer(bytes);
-            Object obj = kryo.readObject(input, clazz);
-            return obj;
+            return kryo.readObject(input, clazz);
         } catch (Exception e) {
             String message=this.getClass().getName()+ ExceptionMessage.DESERIALIZE_EXCEPTION;
             e.printStackTrace();

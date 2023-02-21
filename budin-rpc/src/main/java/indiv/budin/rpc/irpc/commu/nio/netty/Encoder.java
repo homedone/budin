@@ -34,7 +34,8 @@ public class Encoder extends MessageToByteEncoder {
                 if (serializer == null) {
                     throw new EncoderException("Serializer not be find");
                 }
-                byte[] serialize = serializer.serialize(o);
+                System.out.println(rpcMessage.getData().toString());
+                byte[] serialize = serializer.serialize(rpcMessage.getData());
                 byte[] compress = CompressionUtil.compress(serialize);
                 byteBuf.writeBytes(compress);
                 bodyLen=compress.length;

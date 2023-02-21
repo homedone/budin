@@ -47,9 +47,11 @@ public class RpcProxyContainer {
 
                     ClientProxy clientProxy = new ClientProxy(client, serviceConfig);
                     Object proxyObject = clientProxy.getProxyInstance(field.getType());
+                    container.put(field.getType().getName(),proxyObject);
                     field.setAccessible(true);
                     try {
                         field.set(obj, proxyObject);
+                        System.out.println();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

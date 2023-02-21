@@ -23,8 +23,11 @@ public class KryoThreadSerializer implements BaseSerializer {
         @Override
         protected Kryo initialValue() {
             Kryo kryo=new Kryo();
+            kryo.setRegistrationRequired(false);
+            kryo.setReferences(true);
             kryo.register(RpcRequest.class);
             kryo.register(RpcResponse.class);
+            kryo.register(java.lang.Class[].class);
             return kryo;
         }
     };

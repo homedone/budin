@@ -2,10 +2,12 @@ package indiv.budin.rpc.irpc.commu.nio.netty;
 
 import indiv.budin.rpc.irpc.carrier.RpcMessage;
 import indiv.budin.rpc.irpc.carrier.RpcRequest;
+import indiv.budin.rpc.irpc.carrier.RpcResponse;
 import indiv.budin.rpc.irpc.center.base.RegistryCenter;
 import indiv.budin.rpc.irpc.center.nacos.NacosRegistryCenter;
 import indiv.budin.rpc.irpc.common.constants.MessageType;
 import indiv.budin.rpc.irpc.common.constants.SerializerType;
+import indiv.budin.rpc.irpc.common.utils.SyncFuture;
 import indiv.budin.rpc.irpc.commu.nio.Client;
 import indiv.budin.rpc.irpc.exception.NettyConnectException;
 import io.netty.bootstrap.Bootstrap;
@@ -19,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -62,12 +65,22 @@ public class NettyClient implements Client {
         if (channelMap.containsKey(net)) return channelMap.get(net);
         try {
             ChannelFuture future = bootstrap.connect(inetSocketAddress);
+            SyncFuture<Boolean> syncFuture=new SyncFuture<>(1);
             future.addListener((ChannelFutureListener) fu -> {
                 if (!fu.isSuccess()) {
+                    logger.info("connect problem: "+fu.cause());
                     logger.error("connect fail, try to reconnect within " + RECONNECT_DELAY + " seconds");
-                    fu.channel().eventLoop().schedule(() -> connect(inetSocketAddress), RECONNECT_DELAY, TimeUnit.SECONDS);
+//                    fu.channel().eventLoop().schedule(() -> connect(inetSocketAddress), RECONNECT_DELAY, TimeUnit.SECONDS);
+                    syncFuture.setResponse(Boolean.FALSE);
+                }else{
+                    logger.info("connect success");
+                    syncFuture.setResponse(Boolean.TRUE);
                 }
             });
+            syncFuture.get(10,TimeUnit.SECONDS);
+            if (!syncFuture.getResponse()){
+                throw new NettyConnectException("netty connect fail");
+            }
             SocketChannel socketChannel = (SocketChannel) future.channel();
             channelMap.put(net, socketChannel);
             return socketChannel;
@@ -86,7 +99,7 @@ public class NettyClient implements Client {
             RpcRequest request = (RpcRequest) message;
             logger.info(request.toString());
             InetSocketAddress inetSocketAddress = registryCenter.discovery(request.getServiceNameWithNode());
-            logger.info(inetSocketAddress.getHostName()+"."+inetSocketAddress.getPort());
+            logger.info(inetSocketAddress.getHostName()+"::"+inetSocketAddress.getPort());
             RpcMessage rpcMessage = new RpcMessage();
             rpcMessage.setData(request);
             rpcMessage.setMessageType(MessageType.REQUEST.getType());
@@ -94,14 +107,22 @@ public class NettyClient implements Client {
             rpcMessage.setSerializerType(serializerType);
             logger.info(rpcMessage.toString());
             Channel channel = connect(inetSocketAddress);
+            SyncFuture<RpcResponse> syncFuture=new SyncFuture<>(1);
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) fu -> {
                 if (!fu.isSuccess()) {
-                    logger.error("send message fail as "+fu.cause());
+                    logger.error("rpc call fail as "+fu.cause());
                     fu.channel().close();
                 }else {
-                    logger.info("send message success");
+                    logger.info("rpc call success");
+
                 }
             });
+            try {
+                syncFuture.get(10,TimeUnit.SECONDS);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
         }
         return null;
     }
