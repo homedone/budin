@@ -1,5 +1,7 @@
-package indiv.budin.rpc.irpc.common.utils;
+package indiv.budin.rpc.irpc.common.concurent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -7,16 +9,19 @@ import java.util.concurrent.*;
  * @date 2023/2/21 20 03
  * discription
  */
-public class SyncFuture<T> implements Future<T> {
+public class SyncFuture<T> implements Future<T>,ReuseFuture {
     private CountDownLatch countDownLatch;
     private T response;
 
-    public SyncFuture(CountDownLatch countDownLatch) {
-        this.countDownLatch = countDownLatch;
+    private String futureName;
+
+    public SyncFuture() {
+        countDownLatch=new CountDownLatch(1);
     }
 
-    public SyncFuture(int count) {
-        countDownLatch=new CountDownLatch(count);
+    public SyncFuture(String name) {
+        futureName=name;
+        new SyncFuture<>();
     }
 
     @Override
@@ -42,18 +47,31 @@ public class SyncFuture<T> implements Future<T> {
 
     @Override
     public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        if (countDownLatch.await(timeout,unit)){
+        if (countDownLatch.await(timeout, unit)) {
             return response;
         }
         return null;
     }
+    @Override
+    public void reset() {
+        countDownLatch=new CountDownLatch(1);
+    }
 
-    public void setResponse(T response) {
-        this.response = response;
+    public void done() {
         countDownLatch.countDown();
     }
 
+    public void doneAndPut(T response) {
+        this.response=response;
+        done();
+    }
+
+
     public T getResponse() {
         return response;
+    }
+
+    public String getFutureName() {
+        return futureName;
     }
 }

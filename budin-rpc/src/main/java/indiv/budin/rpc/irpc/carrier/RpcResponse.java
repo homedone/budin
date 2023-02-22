@@ -10,7 +10,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString
 public class RpcResponse implements Serializable {
-    private int messageId;
+    private String messageId;
     private Integer code;
     private boolean status;
     private String message;
@@ -25,11 +25,11 @@ public class RpcResponse implements Serializable {
         this.status = result.isSuccess();
     }
 
-    public static RpcResponse success(int messageId,String messageVersion, Object data) {
+    public static RpcResponse success(String messageId,String messageVersion, Object data) {
         return success(null,messageId,messageVersion,data);
     }
 
-    public static RpcResponse success(ResponseResult responseResult,int messageId,String messageVersion, Object data) {
+    public static RpcResponse success(ResponseResult responseResult,String messageId,String messageVersion, Object data) {
         RpcResponse response;
         if (responseResult==null){
             response=new RpcResponse(CommonResponse.SUCCESS, data);

@@ -33,10 +33,10 @@ public class KryoPoolSerializer implements BaseSerializer {
             @Override
             protected Kryo create() {
                 Kryo kryo = new Kryo();
-                kryo.setRegistrationRequired(false);
-                kryo.setReferences(true);
                 kryo.register(RpcRequest.class);
                 kryo.register(RpcResponse.class);
+                kryo.setRegistrationRequired(false);
+                kryo.setReferences(true);
                 return kryo;
             }
         };

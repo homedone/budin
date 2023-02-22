@@ -4,6 +4,7 @@ import indiv.budin.rpc.irpc.carrier.RpcMessage;
 import indiv.budin.rpc.irpc.carrier.RpcRequest;
 import indiv.budin.rpc.irpc.carrier.RpcResponse;
 import indiv.budin.rpc.irpc.common.constants.MessageType;
+import indiv.budin.rpc.irpc.common.utils.CompressionUtil;
 import indiv.budin.rpc.irpc.common.utils.MessageUtil;
 import indiv.budin.rpc.irpc.common.utils.SerializerUtil;
 import indiv.budin.rpc.irpc.commu.nio.code.MessageCode;
@@ -37,6 +38,7 @@ public class Decoder extends LengthFieldBasedFrameDecoder {
     @Override
     protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
         Object decode = super.decode(ctx, in);
+        if (decode==null) decode=in;
         if (decode instanceof ByteBuf) {
             ByteBuf byteBuf = (ByteBuf) decode;
             int byteLen = byteBuf.readableBytes();
@@ -65,7 +67,7 @@ public class Decoder extends LengthFieldBasedFrameDecoder {
         if (MessageCode.VERSION != b) {
             throw new EncoderException("Version error");
         }
-        int dataLength = byteBuf.readInt();
+        int dataLength = byteBuf.readInt()-MessageCode.HEAD_LEN;
         byte messageType = byteBuf.readByte();
         byte serializerType = byteBuf.readByte();
         int messageId = byteBuf.readInt();
@@ -75,13 +77,18 @@ public class Decoder extends LengthFieldBasedFrameDecoder {
             byteBuf.readBytes(data);
             BaseSerializer baseSerializer = SerializerUtil.getSerializer(serializerType);
             Class<?> messageClass = MessageUtil.getMessageClass(messageType);
-            Object obj = baseSerializer.deserialize(data, messageClass);
-            if (messageType == MessageType.REQUEST.getType()) {
-                RpcRequest request = (RpcRequest) obj;
-                rpcMessage.setData(request);
-            } else if (messageType == MessageType.RESPONSE.getType()) {
-                RpcResponse response = (RpcResponse) obj;
-                rpcMessage.setData(response);
+            try {
+                byte[] decompress = CompressionUtil.decompress(data);
+                Object obj = baseSerializer.deserialize(decompress, messageClass);
+                if (messageType == MessageType.REQUEST.getType()) {
+                    RpcRequest request = (RpcRequest) obj;
+                    rpcMessage.setData(request);
+                } else if (messageType == MessageType.RESPONSE.getType()) {
+                    RpcResponse response = (RpcResponse) obj;
+                    rpcMessage.setData(response);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
         rpcMessage.setMessageId(messageId);

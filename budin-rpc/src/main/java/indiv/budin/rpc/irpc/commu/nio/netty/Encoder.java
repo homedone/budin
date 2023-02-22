@@ -26,7 +26,7 @@ public class Encoder extends MessageToByteEncoder {
             byteBuf.writerIndex(byteBuf.writerIndex() + MessageCode.FIELD_LENGTH);
             byteBuf.writeBytes(new byte[]{rpcMessage.getMessageType()});
             byteBuf.writeBytes(new byte[]{rpcMessage.getSerializerType()});
-            byteBuf.writeByte(rpcMessage.getMessageId());
+            byteBuf.writeInt(rpcMessage.getMessageId());
             int bodyLen=0;
             if (rpcMessage.getMessageType() == MessageType.REQUEST.getType()
                     || rpcMessage.getMessageType() == MessageType.RESPONSE.getType()) {
@@ -34,7 +34,6 @@ public class Encoder extends MessageToByteEncoder {
                 if (serializer == null) {
                     throw new EncoderException("Serializer not be find");
                 }
-                System.out.println(rpcMessage.getData().toString());
                 byte[] serialize = serializer.serialize(rpcMessage.getData());
                 byte[] compress = CompressionUtil.compress(serialize);
                 byteBuf.writeBytes(compress);

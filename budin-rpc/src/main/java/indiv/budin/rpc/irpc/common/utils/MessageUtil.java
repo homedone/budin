@@ -9,7 +9,7 @@ public class MessageUtil {
     public static Class<?> getMessageClass(byte b){
         if (MessageType.REQUEST.getType()==b){
             return RpcRequest.class;
-        }else if(MessageType.REQUEST.getType()==b){
+        }else if(MessageType.RESPONSE.getType()==b){
             return RpcResponse.class;
         }else return null;
     }

@@ -5,9 +5,13 @@ import indiv.budin.rpc.irpc.carrier.RpcRequest;
 import indiv.budin.rpc.irpc.carrier.RpcResponse;
 import indiv.budin.rpc.irpc.center.base.RegistryCenter;
 import indiv.budin.rpc.irpc.center.nacos.NacosRegistryCenter;
+import indiv.budin.rpc.irpc.common.concurent.FutureMap;
+import indiv.budin.rpc.irpc.common.concurent.FuturePool;
+import indiv.budin.rpc.irpc.common.concurent.SyncFuturePool;
 import indiv.budin.rpc.irpc.common.constants.MessageType;
 import indiv.budin.rpc.irpc.common.constants.SerializerType;
-import indiv.budin.rpc.irpc.common.utils.SyncFuture;
+import indiv.budin.rpc.irpc.common.concurent.SyncFuture;
+import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
 import indiv.budin.rpc.irpc.commu.nio.Client;
 import indiv.budin.rpc.irpc.exception.NettyConnectException;
 import io.netty.bootstrap.Bootstrap;
@@ -21,7 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,16 +33,18 @@ public class NettyClient implements Client {
 
     Logger logger = LoggerFactory.getLogger(NettyClient.class);
 
-    private AtomicInteger atomicInteger=new AtomicInteger();
+    private final FutureMap futureMap;
+    private final AtomicInteger atomicInteger = new AtomicInteger();
     private final static int RECONNECT_DELAY = 20;
     private final Bootstrap bootstrap;
 
-    private final Map<String, SocketChannel> channelMap;
+    private final Map<String, Channel> channelMap;
     private final EventLoopGroup eventLoopGroup;
 
     private final RegistryCenter registryCenter;
 
     public NettyClient() {
+        futureMap= (FutureMap) FactoryUtil.getSingletonInstance(FutureMap.class);
         registryCenter = NacosRegistryCenter.getInstance();
         eventLoopGroup = new NioEventLoopGroup();
         channelMap = new ConcurrentHashMap<>();
@@ -60,28 +66,28 @@ public class NettyClient implements Client {
         }
     }
 
-    public SocketChannel connect(InetSocketAddress inetSocketAddress) {
+    public Channel connect(InetSocketAddress inetSocketAddress) {
         String net = inetSocketAddress.toString();
         if (channelMap.containsKey(net)) return channelMap.get(net);
         try {
             ChannelFuture future = bootstrap.connect(inetSocketAddress);
-            SyncFuture<Boolean> syncFuture=new SyncFuture<>(1);
+            SyncFuture<Boolean> syncFuture = new SyncFuture<>();
             future.addListener((ChannelFutureListener) fu -> {
                 if (!fu.isSuccess()) {
-                    logger.info("connect problem: "+fu.cause());
+                    logger.info("connect problem: " + fu.cause());
                     logger.error("connect fail, try to reconnect within " + RECONNECT_DELAY + " seconds");
 //                    fu.channel().eventLoop().schedule(() -> connect(inetSocketAddress), RECONNECT_DELAY, TimeUnit.SECONDS);
-                    syncFuture.setResponse(Boolean.FALSE);
-                }else{
+                    syncFuture.doneAndPut(Boolean.FALSE);
+                } else {
                     logger.info("connect success");
-                    syncFuture.setResponse(Boolean.TRUE);
+                    syncFuture.doneAndPut(Boolean.TRUE);
                 }
             });
-            syncFuture.get(10,TimeUnit.SECONDS);
-            if (!syncFuture.getResponse()){
+            syncFuture.get(10, TimeUnit.SECONDS);
+            if (!syncFuture.getResponse()) {
                 throw new NettyConnectException("netty connect fail");
             }
-            SocketChannel socketChannel = (SocketChannel) future.channel();
+            Channel socketChannel = future.channel();
             channelMap.put(net, socketChannel);
             return socketChannel;
         } catch (Exception e) {
@@ -99,7 +105,7 @@ public class NettyClient implements Client {
             RpcRequest request = (RpcRequest) message;
             logger.info(request.toString());
             InetSocketAddress inetSocketAddress = registryCenter.discovery(request.getServiceNameWithNode());
-            logger.info(inetSocketAddress.getHostName()+"::"+inetSocketAddress.getPort());
+            logger.info(inetSocketAddress.getHostName() + "::" + inetSocketAddress.getPort());
             RpcMessage rpcMessage = new RpcMessage();
             rpcMessage.setData(request);
             rpcMessage.setMessageType(MessageType.REQUEST.getType());
@@ -107,22 +113,21 @@ public class NettyClient implements Client {
             rpcMessage.setSerializerType(serializerType);
             logger.info(rpcMessage.toString());
             Channel channel = connect(inetSocketAddress);
-            SyncFuture<RpcResponse> syncFuture=new SyncFuture<>(1);
+            SyncFuture<Object> syncFuture = new SyncFuture<>();
+            futureMap.put(request.getMessageId(),syncFuture);
             channel.writeAndFlush(rpcMessage).addListener((ChannelFutureListener) fu -> {
                 if (!fu.isSuccess()) {
-                    logger.error("rpc call fail as "+fu.cause());
+                    logger.error("rpc call fail as " + fu.cause());
                     fu.channel().close();
-                }else {
+                } else {
                     logger.info("rpc call success");
-
                 }
             });
             try {
-                syncFuture.get(10,TimeUnit.SECONDS);
-            }catch (Exception e){
+                return syncFuture.get(10, TimeUnit.SECONDS);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
         }
         return null;
     }
