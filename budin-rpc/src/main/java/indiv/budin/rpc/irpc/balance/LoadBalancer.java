@@ -5,6 +5,12 @@ import indiv.budin.rpc.irpc.carrier.RpcRequest;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-public interface LoadBalancer {
-    InetSocketAddress select(List<String> nodeList, RpcRequest request);
+public interface LoadBalancer<T> {
+    T select(List<T> nodeList, RpcRequest request);
+
+    T select(RpcRequest request);
+
+    T select(String serviceName,String requestKey);
+
+    void putInto(List<T> nodeList,String serviceName);
 }

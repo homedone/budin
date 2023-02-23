@@ -18,6 +18,8 @@ public interface RegistryCenter {
 
     InetSocketAddress discovery(String serviceName);
 
+    InetSocketAddress discovery(String serviceName,String requestKey);
+
     /**
      * 销毁一个服务
      * @param serviceName

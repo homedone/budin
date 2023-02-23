@@ -1,5 +1,7 @@
 package indiv.budin.rpc.irpc.center.nacos;
 
+import indiv.budin.rpc.irpc.balance.ConsistentHashLoadBalancer;
+import indiv.budin.rpc.irpc.balance.LoadBalancer;
 import indiv.budin.rpc.irpc.carrier.ServiceConfig;
 import indiv.budin.rpc.irpc.center.base.RegistryCenter;
 import indiv.budin.rpc.irpc.center.base.ServiceCenter;
@@ -12,22 +14,28 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NacosServiceCenter implements ServiceCenter {
     private final RegistryCenter registryCenter=NacosRegistryCenter.getInstance();
 
+
+    public NacosServiceCenter() {
+
+    }
+
     private final Map<String,Object> serviceContainer= new ConcurrentHashMap<>();
     @Override
-    public Object getService(String serviceName) {
-        if (!serviceContainer.containsKey(serviceName)){
-            String message=serviceName+" no in service center";
+    public Object getService(String serviceNameWithNode) {
+        if (!serviceContainer.containsKey(serviceNameWithNode)){
+            String message=serviceNameWithNode+" no in service center";
             throw new RpcServiceException(message);
         }
-        Object obj = serviceContainer.get(serviceName);
+        Object obj = serviceContainer.get(serviceNameWithNode);
         return obj;
     }
 
     @Override
     public void addService(ServiceConfig serviceConfig, Object service) {
-        String serviceName = serviceConfig.getServiceNameWithNode();
-        if (serviceContainer.containsKey(serviceName)) return;
-        serviceContainer.put(serviceName,service);
+        String serviceNameWithNode = serviceConfig.getServiceNameWithNode();
+        String serviceName = serviceConfig.getServiceName();
+        if (serviceContainer.containsKey(serviceNameWithNode)) return;
+        serviceContainer.put(serviceNameWithNode,service);
         registryCenter.register(serviceName,new InetSocketAddress(serviceConfig.getHost(),serviceConfig.getPort()));
     }
 }

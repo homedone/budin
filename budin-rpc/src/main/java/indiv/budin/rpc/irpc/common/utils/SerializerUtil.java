@@ -23,7 +23,7 @@ public class SerializerUtil {
             return new KryoThreadSerializer();
         }else if(SerializerType.KRYO_POOL_SERIALIZER.getType()==b){
             return new KryoPoolSerializer();
-        }else if (SerializerType.HESSION_SERIALIZER.getType()==b){
+        }else if (SerializerType.HESSIAN_SERIALIZER.getType()==b){
             return null;
         }else return null;
     }

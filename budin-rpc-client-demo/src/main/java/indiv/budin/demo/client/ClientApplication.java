@@ -24,8 +24,8 @@ public class ClientApplication {
         RpcProxyDependencyInjector rpcProxyDependencyInjector = (RpcProxyDependencyInjector) RpcProxyDependencyInjector.creator();
         rpcProxyDependencyInjector.config(yamlMap).scan(packageClass).inject();
         UserController userController = (UserController) rpcProxyDependencyInjector.getBean(UserController.class.getName());
-        userController.getUserInfo("dxq");
-
-
+        for (int i = 0; i < 100; i++) {
+            userController.getUserInfo("dxq");
+        }
     }
 }

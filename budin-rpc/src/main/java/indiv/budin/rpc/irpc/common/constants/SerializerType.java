@@ -10,7 +10,7 @@ public enum SerializerType {
     JDK_SERIALIZER((byte) 1,"JDK"),
     KRYO_THREAD_SERIALIZER((byte) 2,"KRYO_THREAD"),
     KRYO_POOL_SERIALIZER((byte) 3,"KRYO_POOL"),
-    HESSION_SERIALIZER((byte) 4,"KRYO");
+    HESSIAN_SERIALIZER((byte) 4,"HESSIAN");
     byte type;
 
     String description;

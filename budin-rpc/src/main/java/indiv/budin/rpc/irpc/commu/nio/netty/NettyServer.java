@@ -7,8 +7,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 @IocComponent
 public class NettyServer {
@@ -46,6 +48,7 @@ public class NettyServer {
                         @Override
                         protected void initChannel(SocketChannel channel) throws Exception {
                             channel.pipeline()
+                                    .addLast(new IdleStateHandler(20,0,0, TimeUnit.SECONDS))
                                     .addLast(new Encoder())
                                     .addLast(new Decoder())
                                     .addLast(new SimpleNettyServerHandler());

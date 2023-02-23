@@ -19,6 +19,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,7 @@ public class NettyClient implements Client {
                     .handler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline()
+                                    .addLast(new IdleStateHandler(0,15,0,TimeUnit.SECONDS))
                                     .addLast(new Encoder())
                                     .addLast(new Decoder())
                                     .addLast(new SimpleNettyClientHandler());
@@ -104,7 +106,7 @@ public class NettyClient implements Client {
         if (message instanceof RpcRequest) {
             RpcRequest request = (RpcRequest) message;
             logger.info(request.toString());
-            InetSocketAddress inetSocketAddress = registryCenter.discovery(request.getServiceNameWithNode());
+            InetSocketAddress inetSocketAddress = registryCenter.discovery(request.getServiceName(),request.getMessageId());
             logger.info(inetSocketAddress.getHostName() + "::" + inetSocketAddress.getPort());
             RpcMessage rpcMessage = new RpcMessage();
             rpcMessage.setData(request);
