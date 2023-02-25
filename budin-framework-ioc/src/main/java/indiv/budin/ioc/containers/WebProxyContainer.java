@@ -85,6 +85,12 @@ public class WebProxyContainer extends HttpServlet {
         }
     }
 
+    /**
+     * 获取请求体，每个服务只允许一个请求体
+     * @param req
+     * @param method
+     * @return
+     */
     private Object getRequestBody(HttpServletRequest req, Method method) {
         try (BufferedReader reader = req.getReader()) {
             StringBuffer stringBuffer = new StringBuffer();// 接收用户端传来的JSON字符串（body体里的数据）
@@ -93,11 +99,11 @@ public class WebProxyContainer extends HttpServlet {
                 stringBuffer.append(line);
             }
             JSONObject jsonObject = JSON.parseObject(stringBuffer.toString());
-            Object obj=null;
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            for (Class<?> parameter : parameterTypes) {
+            Object obj = null;
+            Parameter[] parameters = method.getParameters();
+            for (Parameter parameter : parameters) {
                 if (parameter.isAnnotationPresent(IocRequestBody.class)) {
-                    obj = jsonToObject(parameter, jsonObject);
+                    obj = jsonToObject(parameter.getType(), parameter.getName(), jsonObject.getJSONObject(parameter.getName()));
                     break;
                 }
             }
@@ -108,16 +114,27 @@ public class WebProxyContainer extends HttpServlet {
         return null;
     }
 
-    private Object jsonToObject(Class<?> parameter, JSONObject jsonObject) {
+    /**
+     * 递归注入Json属性，严格根据属性名称与参数名称
+     * @param clazz
+     * @param parameterName
+     * @param jsonObject
+     * @return
+     */
+    private Object jsonToObject(Class<?> clazz, String parameterName, JSONObject jsonObject) {
         try {
-            Object obj = Class.forName(parameter.getName()).newInstance();
-            Field[] declaredFields = parameter.getDeclaredFields();
-            for (Field field : declaredFields) {
-                JSONObject o = null;
+            Object obj = clazz.getDeclaredConstructor().newInstance();
+            Field[] fields = clazz.getFields();
+            for (Field field : fields) {
+                Object o = null;
                 if (jsonObject.containsKey(field.getName())) {
-                    o = (JSONObject) jsonObject.get(field.getName());
+                    Object temp = jsonObject.get(field.getName());
+                    if (temp instanceof JSONObject) {
+                        field.set(obj, jsonToObject(field.getType(), field.getName(), (JSONObject) temp));
+                    }else {
+                        field.set(obj,temp);
+                    }
                 }
-                field.set(obj, jsonToObject(field.getClass(), o));
             }
             return obj;
         } catch (Exception e) {
@@ -150,8 +167,9 @@ public class WebProxyContainer extends HttpServlet {
                     parameterValues.add(parameterMap.get(iocRequestParam.value())[0]);
                     break;
                 }
-                if (aClass.isAnnotationPresent(IocRequestBody.class)){
+                if (aClass.equals(IocRequestBody.class)) {
                     parameterValues.add(requestBody);
+                    break;
                 }
             }
         }

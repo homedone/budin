@@ -1,0 +1,9 @@
+/budin-gateway/src/main/resources/application.yml
+/budin-entity/src/main/resources/generatorConfig.xml
+/*/src/main/resources/application.yml
+/*/src/main/resources/application1.yml
+/*/src/main/resources/application2.yml
+/*/src/main/resources/application3.yml
+
+target/
+.idea/
