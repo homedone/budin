@@ -2,34 +2,34 @@ package indiv.budin.aop.proxy;
 
 import indiv.budin.aop.annotations.AopBackward;
 import indiv.budin.aop.annotations.AopForward;
-import indiv.budin.ioc.containers.ProxyContainer;
+import indiv.budin.ioc.containers.AopProxyContainer;
 import net.sf.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 
 public class EnhanceProxy extends BaseProxy {
 
-    private ProxyContainer proxyContainer;
+    private AopProxyContainer aopProxyContainer;
     public EnhanceProxy(Object obj) {
         super(obj);
-        proxyContainer=ProxyContainer.getInstance();
+        aopProxyContainer = AopProxyContainer.getInstance();
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = obj.getClass().getName() + "." + method.getName();
-        proxyContainer.noticeByAnnotation(methodName, AopForward.class);
+        aopProxyContainer.noticeByAnnotation(methodName, AopForward.class);
         Object invoke = super.invoke(proxy, method, args);
-        proxyContainer.noticeByAnnotation(methodName, AopBackward.class);
+        aopProxyContainer.noticeByAnnotation(methodName, AopBackward.class);
         return invoke;
     }
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
         String methodName = obj.getClass().getName() + "." + method.getName();
-        proxyContainer.noticeByAnnotation(methodName, AopForward.class);
+        aopProxyContainer.noticeByAnnotation(methodName, AopForward.class);
         Object intercept = super.intercept(o, method, objects, methodProxy);
-        proxyContainer.noticeByAnnotation(methodName, AopBackward.class);
+        aopProxyContainer.noticeByAnnotation(methodName, AopBackward.class);
         return intercept;
     }
 

@@ -1,12 +1,9 @@
 package indiv.budin.rpc.irpc.proxy;
 
-import indiv.budin.aop.proxy.BaseProxy;
 import indiv.budin.common.utils.UuidUtil;
 import indiv.budin.rpc.irpc.carrier.RpcRequest;
 import indiv.budin.rpc.irpc.carrier.ServiceConfig;
-import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
-import indiv.budin.rpc.irpc.commu.nio.Client;
-import indiv.budin.rpc.irpc.commu.nio.netty.NettyClient;
+import indiv.budin.rpc.irpc.client.base.Client;
 import indiv.budin.rpc.irpc.exception.ProxyException;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;

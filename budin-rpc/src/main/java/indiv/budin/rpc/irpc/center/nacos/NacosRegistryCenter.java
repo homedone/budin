@@ -38,7 +38,7 @@ public class NacosRegistryCenter implements RegistryCenter {
 
     public static NacosRegistryCenter getInstance(String address) {
         if (nacosRegistryCenter == null) {
-            synchronized (RegistryCenter.class) {
+            synchronized (NacosRegistryCenter.class) {
                 if (nacosRegistryCenter == null) {
                     try {
                         nacosRegistryCenter = new NacosRegistryCenter();

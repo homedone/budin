@@ -43,7 +43,7 @@ public class SimpleNettyClientHandler extends SimpleChannelInboundHandler<RpcMes
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, RpcMessage rpcMessage) throws Exception {
         if (rpcMessage.getMessageType() == MessageType.RESPONSE.getType()) {
             RpcResponse response = (RpcResponse) rpcMessage.getData();
-            System.out.println(response.toString());
+            logger.info(response.toString());
             channelHandlerContext.writeAndFlush(response);
             SyncFuture<Object> rpcResponseFuture = futureMap.get(response.getMessageId());
             if (response.isStatus()) {

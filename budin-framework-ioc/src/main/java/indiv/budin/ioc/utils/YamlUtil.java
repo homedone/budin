@@ -24,6 +24,7 @@ public class YamlUtil {
     public static Map getObjectMapByPrefix(Map objectMap, String prefix) {
         String[] split = prefix.split("\\.");
         for (String key : split) {
+            if (!objectMap.containsKey(key)) return null;
             objectMap = (Map) objectMap.get(key);
         }
         return objectMap;

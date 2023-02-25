@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 public interface IocContainer {
-    
+
+    void put(String name, Object bean);
+
     public boolean containsBean(String name);
     public Object getBean(String name);
 
@@ -21,4 +23,8 @@ public interface IocContainer {
     Map<String, Object> getBeanContainer();
 
     Set<Class<?>> getAllClasses();
+
+    Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation);
+
+    Set<String> getKeyByAnnotation(Class<? extends Annotation> annotation);
 }

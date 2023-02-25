@@ -12,11 +12,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NacosServiceCenter implements ServiceCenter {
-    private final RegistryCenter registryCenter=NacosRegistryCenter.getInstance();
+    private final RegistryCenter registryCenter;
 
 
     public NacosServiceCenter() {
+        registryCenter=NacosRegistryCenter.getInstance();
+    }
 
+    public NacosServiceCenter(String address) {
+        registryCenter=NacosRegistryCenter.getInstance(address);
     }
 
     private final Map<String,Object> serviceContainer= new ConcurrentHashMap<>();

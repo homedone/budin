@@ -5,18 +5,14 @@ import indiv.budin.ioc.annotations.IocConfiguration;
 import indiv.budin.ioc.constants.ExceptionMessage;
 import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NotFindClassException;
-import indiv.budin.ioc.utils.ClassUtil;
 import indiv.budin.ioc.utils.StringUtil;
 import indiv.budin.ioc.utils.YamlUtil;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -25,14 +21,14 @@ import java.util.Set;
  * discription
  */
 public class ProxyDependencyInjector implements DependencyInjector {
-    private ProxyContainer proxyContainer;
+    private ProxyContainer budinProxyContainer;
 
     private IocContainer iocContainer;
     private Map<String, Object> yamlMap;
 
     public ProxyDependencyInjector() {
         iocContainer=AnnotationContainer.getInstance();
-        proxyContainer = ProxyContainer.getInstance();
+        budinProxyContainer = AopProxyContainer.getInstance();
     }
 
     public static ProxyDependencyInjector creator() {
@@ -51,8 +47,7 @@ public class ProxyDependencyInjector implements DependencyInjector {
 
     @Override
     public ProxyDependencyInjector inject() {
-        proxyContainer.injectProxy();
-        proxyContainer.doProxy();
+        budinProxyContainer.doProxy();
         for (Class<?> clazz : iocContainer.getAllClasses()) {
             setAttributionByConfiguration(clazz);
             setAttributionByAutowired(clazz);
@@ -65,7 +60,7 @@ public class ProxyDependencyInjector implements DependencyInjector {
     }
 
     Object getBean(String s){
-        Object obj = proxyContainer.getBean(s);
+        Object obj = budinProxyContainer.getBean(s);
         if (obj==null){
             obj=iocContainer.getBean(s);
         }

@@ -1,32 +1,29 @@
 package indiv.budin.rpc.irpc.ioc;
+
 import indiv.budin.ioc.annotations.IocAutowired;
 import indiv.budin.ioc.annotations.IocConfiguration;
+import indiv.budin.ioc.annotations.IocController;
 import indiv.budin.ioc.constants.ExceptionMessage;
-import indiv.budin.ioc.containers.AnnotationContainer;
-import indiv.budin.ioc.containers.DependencyInjector;
-import indiv.budin.ioc.containers.IocContainer;
-import indiv.budin.ioc.containers.ProxyContainer;
+import indiv.budin.ioc.containers.*;
 import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NotFindClassException;
-import indiv.budin.ioc.utils.ClassUtil;
 import indiv.budin.ioc.utils.StringUtil;
 import indiv.budin.ioc.utils.YamlUtil;
+import indiv.budin.rpc.irpc.annotation.RpcAutowire;
 import indiv.budin.rpc.irpc.annotation.RpcService;
 import indiv.budin.rpc.irpc.carrier.ServiceConfig;
 import indiv.budin.rpc.irpc.center.base.ServiceCenter;
-import indiv.budin.rpc.irpc.center.nacos.NacosServiceCenter;
 import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
+import indiv.budin.rpc.irpc.client.base.Client;
+import indiv.budin.rpc.irpc.proxy.ClientProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -34,23 +31,21 @@ import java.util.Set;
  * @date 2022/11/16 20 26
  * discription
  */
-public class RpcProxyDependencyInjector implements DependencyInjector{
+public class RpcProxyDependencyInjector implements DependencyInjector {
 
-    Logger logger= LoggerFactory.getLogger(RpcProxyDependencyInjector.class);
-    private RpcProxyContainer rpcProxyContainer;
+    Logger logger = LoggerFactory.getLogger(RpcProxyDependencyInjector.class);
+
+    private ProxyContainer rpcProxyContainer;
+
+    private ProxyContainer aopProxyContainer;
 
     private IocContainer iocContainer;
     private Map<String, Object> yamlMap;
-    private final ServiceCenter serviceCenter;
-
-    public RpcProxyContainer getRpcProxyContainer() {
-        return rpcProxyContainer;
-    }
 
     public RpcProxyDependencyInjector() {
-        iocContainer= AnnotationContainer.getInstance();
+        aopProxyContainer=AopProxyContainer.getInstance();
+        iocContainer = AnnotationContainer.getInstance();
         rpcProxyContainer = (RpcProxyContainer) FactoryUtil.getSingletonInstance(RpcProxyContainer.class);
-        serviceCenter=(NacosServiceCenter) FactoryUtil.getSingletonInstance(NacosServiceCenter.class);
     }
 
     public static RpcProxyDependencyInjector creator() {
@@ -67,37 +62,74 @@ public class RpcProxyDependencyInjector implements DependencyInjector{
         return this;
     }
 
-    public void injectToCenter(){
+    public void injectToCenter(ServiceCenter serviceCenter) {
         Map ip = YamlUtil.getObjectMapByPrefix(yamlMap, "budin.server");
+        String host = String.valueOf(ip.get("host"));
+        int port = (Integer) ip.get("port");
         Set<Class<?>> allClasses = iocContainer.getAllClasses();
-        for (Class<?> clazz: allClasses) {
-            if (clazz.isAnnotationPresent(RpcService.class)){
+        for (Class<?> clazz : allClasses) {
+            if (clazz.isAnnotationPresent(RpcService.class)) {
                 RpcService rpcAutowire = clazz.getAnnotation(RpcService.class);
                 ServiceConfig serviceConfig = new ServiceConfig();
                 serviceConfig.setServiceName(rpcAutowire.serviceName());
                 serviceConfig.setVersion(rpcAutowire.version());
                 serviceConfig.setNodeName(rpcAutowire.node());
-                serviceConfig.setHost(String.valueOf(ip.get("host")));
-                serviceConfig.setPort((Integer) ip.get("port"));
+                serviceConfig.setHost(host);
+                serviceConfig.setPort(port);
                 logger.info(serviceConfig.toString());
-                Object service=iocContainer.getBean(clazz.getName());
-                serviceCenter.addService(serviceConfig,service);
+                Object service = iocContainer.getBean(clazz.getName());
+                serviceCenter.addService(serviceConfig, service);
             }
         }
     }
-    public RpcProxyDependencyInjector injectProxy(){
-        rpcProxyContainer.injectProxy();
+
+    public RpcProxyDependencyInjector injectAopProxy(){
+        aopProxyContainer.doProxy();
+        return this;
+    }
+
+    /**
+     * IocController 代理不能采用JDK动态代理，因为不是同一个对象，client注入属性，也无法调用到对应的方法
+     * @param client
+     * @return
+     */
+    public RpcProxyDependencyInjector injectClientProxy(Client client) {
+        Set<String> classesByAnnotation = iocContainer.getKeyByAnnotation(IocController.class);
+        for (String s : classesByAnnotation) {
+            Object obj = getBean(s);
+            Class<?> clazz =obj.getClass();
+            Field[] fields=clazz.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(RpcAutowire.class)) {
+                    RpcAutowire rpcAutowire = field.getAnnotation(RpcAutowire.class);
+                    ServiceConfig serviceConfig = new ServiceConfig();
+                    serviceConfig.setServiceName(rpcAutowire.serviceName());
+                    serviceConfig.setVersion(rpcAutowire.version());
+                    serviceConfig.setNodeName(rpcAutowire.node());
+
+                    ClientProxy clientProxy = new ClientProxy(client, serviceConfig);
+                    Object proxyObject = clientProxy.getProxyInstance(field.getType());
+                    rpcProxyContainer.put(field.getType().getName(), proxyObject);
+                    try {
+                        field.set(obj, proxyObject);
+                        System.out.println();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         return this;
     }
 
 
     public RpcProxyDependencyInjector inject() {
-        injectProxy();
+        injectAopProxy();
         for (Class<?> clazz : iocContainer.getAllClasses()) {
             setAttributionByConfiguration(clazz);
             setAttributionByAutowired(clazz);
         }
-        injectToCenter();
         return this;
     }
 
@@ -105,10 +137,13 @@ public class RpcProxyDependencyInjector implements DependencyInjector{
         return iocContainer;
     }
 
-    public Object getBean(String s){
+    public Object getBean(String s) {
         Object obj = rpcProxyContainer.getBean(s);
-        if (obj==null){
-            obj=iocContainer.getBean(s);
+        if (obj == null) {
+            obj=aopProxyContainer.getBean(s);
+            if (obj==null){
+                obj = iocContainer.getBean(s);
+            }
         }
         return obj;
     }

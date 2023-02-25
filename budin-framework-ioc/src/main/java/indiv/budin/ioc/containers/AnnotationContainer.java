@@ -2,17 +2,10 @@ package indiv.budin.ioc.containers;
 
 import indiv.budin.ioc.annotations.*;
 import indiv.budin.ioc.constants.ExceptionMessage;
-import indiv.budin.ioc.exceptions.NoBeanException;
 import indiv.budin.ioc.exceptions.NoScanerException;
 import indiv.budin.ioc.utils.PackageUtil;
-import indiv.budin.ioc.utils.StringUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -81,12 +74,17 @@ public class AnnotationContainer implements IocContainer {
         return interfaceClassSet;
     }
 
+    @Override
+    public void put(String name,Object bean){
+        beanContainer.put(name,bean);
+    }
+
 
     public void addToContainer(Set<Class<?>> packageClass, Class<? extends Annotation> annotation) {
         try {
             for (Class<?> packageClazz : packageClass) {
                 if (packageClazz.isAnnotationPresent(annotation)) {
-                    beanContainer.put(packageClazz.getName(), packageClazz.newInstance());
+                    put(packageClazz.getName(), packageClazz.newInstance());
                 }
             }
         } catch (InstantiationException | IllegalAccessException e) {
@@ -122,6 +120,7 @@ public class AnnotationContainer implements IocContainer {
         return allClassSet;
     }
 
+    @Override
     public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation) {
         Set<Class<?>> annotationSet;
         Set<String> keySet = beanContainer.keySet();
@@ -135,6 +134,7 @@ public class AnnotationContainer implements IocContainer {
         }
         return annotationSet;
     }
+    @Override
     public Set<String> getKeyByAnnotation(Class<? extends Annotation> annotation) {
         Set<String> annotationSet;
         Set<String> keySet = beanContainer.keySet();
