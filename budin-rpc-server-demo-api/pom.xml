@@ -20,6 +20,23 @@
             <artifactId>nacos-config-spring-boot-starter</artifactId>
             <version>0.2.7</version>
         </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-reactivestreams</artifactId>
+            <version>4.8.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-core -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-core</artifactId>
+            <version>4.8.2</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>4.8.2</version>
+        </dependency>
     </dependencies>
 
     <properties>
