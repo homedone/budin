@@ -96,7 +96,7 @@ public class NettyClient implements Client {
 
     @Override
     public Object sendObject(Object message) {
-        return sendObject(message, SerializerType.KRYO_POOL_SERIALIZER.getType());
+        return sendObject(message, SerializerType.KRYO_THREAD_SERIALIZER.getType());
     }
 
     public Object sendObject(Object message, byte serializerType) {

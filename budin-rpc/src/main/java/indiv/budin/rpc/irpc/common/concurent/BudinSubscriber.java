@@ -18,27 +18,24 @@ import java.util.concurrent.TimeUnit;
  */
 public class BudinSubscriber<T> implements Subscriber<T>, Future<List<T>> {
     private boolean success;
-    transient private volatile Subscription subscription;
     private final List<T> receives;
     private final List<String> errors;
 
-    transient private final byte[] lock;
 
-    transient private CountDownLatch countDownLatch;
+    private CountDownLatch countDownLatch;
 
     private int count;
 
     public BudinSubscriber() {
         count = 1;
-        lock = new byte[]{};
         errors = new ArrayList<>();
         receives = new ArrayList<>();
+        countDownLatch=new CountDownLatch(1);
     }
 
     public BudinSubscriber(int n) {
         count = n;
         this.countDownLatch = new CountDownLatch(n);
-        lock = new byte[]{};
         errors = new ArrayList<>();
         receives = new ArrayList<>();
     }
@@ -46,12 +43,10 @@ public class BudinSubscriber<T> implements Subscriber<T>, Future<List<T>> {
     @Override
     public void onSubscribe(Subscription s) {
         s.request(Integer.MAX_VALUE);
-        subscription = s;
     }
 
     @Override
     public void onNext(T t) {
-        System.out.println(t);
         receives.add(t);
     }
 
@@ -103,11 +98,6 @@ public class BudinSubscriber<T> implements Subscriber<T>, Future<List<T>> {
         success = false;
         receives.clear();
         errors.clear();
-        subscription = null;
-    }
-
-    public Subscription getSubscription() {
-        return subscription;
     }
 
     public List<T> getReceives() {

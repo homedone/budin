@@ -74,9 +74,10 @@ public class NacosRegistryCenter implements RegistryCenter {
     public InetSocketAddress discovery(String serviceName, String requestKey) {
         try {
             logger.info(serviceName);
+            List<Instance> instances = namingService.getAllInstances(serviceName);
+
             String node = loadBalancer.select(serviceName, requestKey);
             if (node == null) {
-                List<Instance> instances = namingService.getAllInstances(serviceName);
                 List<String> nodes = new ArrayList<>();
                 for (Instance instance : instances) {
                     String nd = instance.getIp() + "@" + instance.getPort();
