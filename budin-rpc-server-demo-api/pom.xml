@@ -37,6 +37,12 @@
             <artifactId>bson</artifactId>
             <version>4.8.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.dooper</groupId>
+            <artifactId>budin-rpc</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <properties>

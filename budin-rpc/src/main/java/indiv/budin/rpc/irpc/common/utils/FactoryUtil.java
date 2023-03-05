@@ -13,6 +13,23 @@ public class FactoryUtil {
     private static final byte[] lock = new byte[]{};
     private static final Map<String, Object> singletonMap = new ConcurrentHashMap<>();
 
+
+    /**
+     * concurrentHashMap的话，已经线程安全了，但还需要进行double check,containsKey+put之后线程不安全
+     * 所以下面方法是线程不安全的
+     * @param clazz
+     * @return
+     */
+    public static Object getClassSingletonInstance(Class<?> clazz){
+        String singletonName = clazz.getName();
+        try {
+            Object obj = singletonMap.getOrDefault(singletonName, singletonMap.put(singletonName, clazz.newInstance()));
+            return obj;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
     public static Object getSingletonInstance(Class<?> clazz) {
         String singletonName = clazz.getName();
         if (!singletonMap.containsKey(singletonName)) {
@@ -60,11 +77,16 @@ public class FactoryUtil {
         for (int i = 0; i < 10; i++) {
             new Thread(() -> {
 //                Cat cat = (Cat) FactoryUtil.getSingletonInstance(Cat.class);
-                Cat cat=(Cat) FactoryUtil.getSingletonInstance(Cat.class, new Object[]{"male"});
-                System.out.println("线程 " + Thread.currentThread().getName() + " 获取了cat对象: " + cat.introduce());
+                Cat cat=(Cat) FactoryUtil.getSingletonInstance(Cat.class);
+                System.out.println("线程 " + Thread.currentThread().getName() + " 获取了cat对象: " + cat);
+                Dog dog=(Dog) FactoryUtil.getSingletonInstance(Dog.class);
+                System.out.println("线程 " + Thread.currentThread().getName() + " 获取了dog对象: " + dog);
             }).start();
         }
     }
+}
+class Dog{
+
 }
 
 class Cat {

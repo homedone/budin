@@ -70,25 +70,34 @@ public class NacosRegistryCenter implements RegistryCenter {
      * @param requestKey
      * @return
      */
+    //此处留待问题，负载中心和注册中心中的服务不同步，导致不可用，不一致性问题，
+    // 服务死掉后 nacos触发健康事件，经历unHealthy状态，一段时间后才deregester
+    // 需要保持哈希环与注册中心发现的服务一致。
+    // 简单的解法是，可以遍历哈希环真实节点，与Healthy节点对比，多余的给remove掉
     @Override
     public InetSocketAddress discovery(String serviceName, String requestKey) {
         try {
             logger.info(serviceName);
             List<Instance> instances = namingService.getAllInstances(serviceName);
-
-            String node = loadBalancer.select(serviceName, requestKey);
-            if (node == null) {
-                List<String> nodes = new ArrayList<>();
-                for (Instance instance : instances) {
+            logger.info("Now service node size is " + instances.size());
+            List<String> nodes = new ArrayList<>();
+            for (Instance instance : instances) {
+                if (instance.isEnabled() && instance.isHealthy()) {
                     String nd = instance.getIp() + "@" + instance.getPort();
                     nodes.add(nd);
+                }else {
+                    logger.error("------ service error");
                 }
-                loadBalancer.putInto(nodes, serviceName);
-                node = loadBalancer.select(serviceName, requestKey);
             }
-            String[] strings=node.split("@");
-            String ip=strings[0];
-            int port=Integer.parseInt(strings[1]);
+            if (!loadBalancer.contains(serviceName)) {
+                loadBalancer.putInto(nodes, serviceName);
+            } else {
+                loadBalancer.consistent(nodes, serviceName);
+            }
+            String node = loadBalancer.select(serviceName, requestKey);
+            String[] strings = node.split("@");
+            String ip = strings[0];
+            int port = Integer.parseInt(strings[1]);
             return new InetSocketAddress(ip, port);
         } catch (Exception e) {
             throw new RpcDiscoveryException(" <NACOS> server discovery fail");

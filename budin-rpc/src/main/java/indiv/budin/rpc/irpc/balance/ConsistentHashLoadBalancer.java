@@ -3,12 +3,7 @@ package indiv.budin.rpc.irpc.balance;
 import indiv.budin.rpc.irpc.balance.selectors.ConsistentHashSelector;
 import indiv.budin.rpc.irpc.balance.selectors.HashSelector;
 import indiv.budin.rpc.irpc.carrier.RpcRequest;
-import indiv.budin.rpc.irpc.center.base.ServiceCenter;
-import indiv.budin.rpc.irpc.center.nacos.NacosServiceCenter;
-import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
 
-import java.net.InetSocketAddress;
-import java.nio.channels.Selector;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +37,21 @@ public class ConsistentHashLoadBalancer implements LoadBalancer<String> {
     public void putInto(List<String> nodeList, String serviceName) {
         if (!selectorMap.containsKey(serviceName)) {
             selectorMap.put(serviceName, ConsistentHashSelector.createDefault().injectNodes(nodeList));
+        }
+    }
+
+    public boolean contains(String serviceName){
+        return selectorMap.containsKey(serviceName);
+    }
+
+    @Override
+    public void consistent(List<String> nodeList, String serviceName){
+        ConsistentHashSelector selector= selectorMap.get(serviceName);
+
+        for (String node:nodeList) {
+            if (!selector.exist(node)){
+                selector.addNode(node);
+            }
         }
     }
 }

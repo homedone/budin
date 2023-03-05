@@ -86,6 +86,7 @@ public class ConsistentHashSelector implements HashSelector<String,String> {
     }
 
     public void addNode(String node) {
+        physicalNodes.add(node);
         for (int i = 0; i < virtual_copies; i++) {
             String key = nodeForm(node) + i;
             long hash = hash(key);
@@ -93,13 +94,19 @@ public class ConsistentHashSelector implements HashSelector<String,String> {
         }
     }
 
+    @Override
     public void removeNode(String node) {
         if (!virtualNodes.containsKey(hash(nodeForm(node) + "0"))) return;
+        physicalNodes.remove(node);
         for (int i = 0; i < virtual_copies; i++) {
             String key = nodeForm(node) + i;
             long hash = hash(key);
             virtualNodes.remove(hash);
         }
+    }
+
+    public boolean exist(String node){
+        return physicalNodes.contains(node);
     }
 
     public String nodeForm(String node) {

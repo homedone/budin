@@ -35,7 +35,7 @@ public class UserController {
     @IocResponseBody
     public ResultUtil<String> getUserInfo(@IocRequestParam( value="userName") String userName,@IocRequestBody People people){
         System.out.println("------准备获取用户介绍------");
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             userService.getUserIntroduce(userName);
         }
         String s = userService.getUserIntroduce(userName);

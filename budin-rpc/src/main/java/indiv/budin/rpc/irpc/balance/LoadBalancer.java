@@ -13,4 +13,8 @@ public interface LoadBalancer<T> {
     T select(String serviceName,String requestKey);
 
     void putInto(List<T> nodeList,String serviceName);
+
+    void consistent(List<String> nodeList, String serviceName);
+
+    boolean contains(String serviceName);
 }
