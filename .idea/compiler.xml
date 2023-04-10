@@ -11,6 +11,7 @@
         <module name="budin-framework-ioc" />
         <module name="budin-rpc-server-demo" />
         <module name="budin-rpc" />
+        <module name="budin-rpc-demo-server" />
         <module name="budin-server-center-eureka" />
         <module name="budin-gateway" />
         <module name="budin-common-utils" />
@@ -34,6 +35,7 @@
       <module name="budin-gateway" options="-parameters" />
       <module name="budin-rpc" options="-parameters" />
       <module name="budin-rpc-client-demo" options="-parameters" />
+      <module name="budin-rpc-demo-server" options="-parameters" />
       <module name="budin-rpc-server-demo" options="-parameters" />
       <module name="budin-rpc-server-demo-api" options="-parameters" />
       <module name="budin-server-center-eureka" options="-parameters" />
