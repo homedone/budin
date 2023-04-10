@@ -35,7 +35,7 @@ public class UserController {
         return userService.getUser(userName);
     }
 
-    @IocAutowired()
+    @IocAutowired
     public void setUserService(UserService userService) {
         this.userService = userService;
     }

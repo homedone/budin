@@ -7,3 +7,6 @@
 
 target/
 .idea/
+/budin-framework-ioc/target/
+/work/
+/logs/
