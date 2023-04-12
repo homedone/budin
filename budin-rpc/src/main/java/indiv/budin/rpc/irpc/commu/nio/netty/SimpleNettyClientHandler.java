@@ -33,6 +33,8 @@ public class SimpleNettyClientHandler extends SimpleChannelInboundHandler<RpcMes
      * @throws Exception
      */
     Logger logger= LoggerFactory.getLogger(SimpleNettyClientHandler.class);
+
+    // futureMao里面应该改造成线程池，不应该重复创建线程，预计改成SyncFuturePool+futureMap的形式
     private final FutureMap futureMap;
 
     public SimpleNettyClientHandler() {

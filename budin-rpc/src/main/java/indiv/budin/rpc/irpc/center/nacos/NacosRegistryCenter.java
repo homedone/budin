@@ -74,6 +74,7 @@ public class NacosRegistryCenter implements RegistryCenter {
     // 服务死掉后 nacos触发健康事件，经历unHealthy状态，一段时间后才deregester
     // 需要保持哈希环与注册中心发现的服务一致。
     // 简单的解法是，可以遍历哈希环真实节点，与Healthy节点对比，多余的给remove掉
+    // 这里预计需要优化，结合nacos做调整
     @Override
     public InetSocketAddress discovery(String serviceName, String requestKey) {
         try {

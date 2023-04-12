@@ -69,6 +69,7 @@ public class NettyClient implements Client {
         if (channelMap.containsKey(net)) return channelMap.get(net);
         try {
             ChannelFuture future = bootstrap.connect(inetSocketAddress);
+            //每次都重新创建一个线程，开销太大，预改进策略，改成线程池
             SyncFuture<Boolean> syncFuture = new SyncFuture<>();
             future.addListener((ChannelFutureListener) fu -> {
                 if (!fu.isSuccess()) {
