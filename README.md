@@ -7,7 +7,7 @@
 
 核心内容：[budin-rpc](https://github.com/homedone/budin/tree/fileserver/budin-rpc)
 实现了RPC Server 与 Client，[budin-framework-ioc](https://github.com/homedone/budin/tree/fileserver/budin-framework-ioc)
-实习了简易的 IOC 控制，简易AOP，以及基于 Tomcat 的快速启动，两个模块都有Demo示例
+实现了简易的 IOC 控制，简易AOP，以及基于 Tomcat 的快速启动，两个模块都有Demo示例
 
 PS: 除此之外，其他部分是一个简易云盘的雏形，OSS用的Minio，用gateway做了一个简易JWT登陆鉴权，可以进行简单的上传文件，其实最初想做个云盘来着，不知不觉走向了简易框架的实现
 ### budin-rpc
@@ -79,6 +79,7 @@ public class ClientApplication {
 ~~~java
 /**
  * 服务类与服务方法，这里使用了MongoDb的SDK，Client
+ * 这里两个注解，一个是放入容器注解，一个是作为rpc服务，（可以优化复用）
  */
 
 @IocService
@@ -100,8 +101,9 @@ public class MongoDBServiceImpl implements MongoDBService {
  */
 @IocController
 public class MongoDBController {
-    @RpcAutowire(serviceName = "indiv.budin.demo.server.api.MongoDBService")
     Logger logger=LoggerFactory.getLogger(MongoDBController.class);
+    
+    @RpcAutowire(serviceName = "indiv.budin.demo.server.api.MongoDBService")
     private MongoDBService mongoDBService;
 
     @IocRequestMapping(url = "/insert")
