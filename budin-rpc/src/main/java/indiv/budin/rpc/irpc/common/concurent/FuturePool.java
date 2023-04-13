@@ -8,8 +8,8 @@ import java.util.concurrent.Future;
  * discription
  */
 public interface FuturePool<T> {
-    Future<T> obtain();
-    void free(Future<T> future);
+    ReuseFuture<T> obtain();
+    void free(ReuseFuture<T> future);
 
     int size();
 

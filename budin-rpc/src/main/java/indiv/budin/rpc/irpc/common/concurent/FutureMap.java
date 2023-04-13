@@ -12,15 +12,15 @@ import java.util.concurrent.Future;
  * discription
  */
 public class FutureMap{
-    private final Map<String, SyncFuture<Object>> responseMap;
+    private final Map<String, ReuseFuture<Object>> responseMap;
 
     public FutureMap() {
         responseMap=new ConcurrentHashMap<>();
     }
-    public SyncFuture<Object> get(String key){
+    public ReuseFuture<Object> get(String key){
         return responseMap.get(key);
     }
-    public void put(String key,SyncFuture<Object> future){
+    public void put(String key,ReuseFuture<Object> future){
         responseMap.put(key,future);
     }
 

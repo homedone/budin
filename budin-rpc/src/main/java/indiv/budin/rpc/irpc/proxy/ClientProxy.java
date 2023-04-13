@@ -4,6 +4,10 @@ import indiv.budin.common.utils.UuidUtil;
 import indiv.budin.rpc.irpc.carrier.RpcRequest;
 import indiv.budin.rpc.irpc.carrier.ServiceConfig;
 import indiv.budin.rpc.irpc.client.base.Client;
+import indiv.budin.rpc.irpc.common.concurent.BlockingFuturePool;
+import indiv.budin.rpc.irpc.common.concurent.ReuseFuture;
+import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
+import indiv.budin.rpc.irpc.commu.nio.netty.NettyClient;
 import indiv.budin.rpc.irpc.exception.ProxyException;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -16,11 +20,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class ClientProxy implements InvocationHandler, MethodInterceptor {
-    Logger logger=LoggerFactory.getLogger(ClientProxy.class);
+    Logger logger = LoggerFactory.getLogger(ClientProxy.class);
     private final Client client;
     private final ServiceConfig serviceConfig;
 
+    private final BlockingFuturePool<Object> requestFuturePool;
+
+
     public ClientProxy(Client client, ServiceConfig serviceConfig) {
+        requestFuturePool = (BlockingFuturePool<Object>) FactoryUtil.getSingletonInstance(BlockingFuturePool.class, new Object[]{100});
         this.client = client;
         this.serviceConfig = serviceConfig;
     }
@@ -47,12 +55,12 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        return invokes(method.getDeclaringClass().getName(),args,method);
+        return invokes(method.getDeclaringClass().getName(), args, method);
     }
 
-    public Object invokes(String interfaceName,Object[] args,Method method){
-        logger.info(interfaceName+"  "+ method.getName());
-        RpcRequest request=new RpcRequest();
+    public Object invokes(String interfaceName, Object[] args, Method method) {
+        logger.info(interfaceName + "  " + method.getName());
+        RpcRequest request = new RpcRequest();
         request.setInterfaceName(interfaceName);
         request.setMessageVersion(serviceConfig.getVersion());
         request.setMessageId(UuidUtil.makeUuid());
@@ -61,10 +69,17 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
         request.setParamTypes(method.getParameterTypes());
         request.setNodeName(serviceConfig.getNodeName());
         request.setServiceName(serviceConfig.getServiceName());
-        try{
-            Object obj = client.sendObject(request);
-            return obj;
-        }catch (Exception e){
+        try {
+            if (client instanceof NettyClient) {
+                ReuseFuture<Object> future = (ReuseFuture) client.sendObject(request);
+                Object o = future.get();
+                // 线程使用完毕归还
+                requestFuturePool.free(future);
+                return o;
+            }
+
+            return client.sendObject(request);
+        } catch (Exception e) {
             e.printStackTrace();
             logger.error("client proxy fail");
             throw new ProxyException();
@@ -73,6 +88,6 @@ public class ClientProxy implements InvocationHandler, MethodInterceptor {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        return invokes(method.getDeclaringClass().getName(),objects,method);
+        return invokes(method.getDeclaringClass().getName(), objects, method);
     }
 }

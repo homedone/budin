@@ -9,18 +9,22 @@ import java.util.concurrent.*;
  * @date 2023/2/21 20 03
  * discription
  */
-public class SyncFuture<T> implements Future<T>,ReuseFuture {
-    private CountDownLatch countDownLatch;
+public class SyncFuture<T> implements ReuseFuture<T> {
+    //CountDownLatch不能复用，改为CyclicBarrier
+//    private CountDownLatch countDownLatch;
+
+    private CyclicBarrier cyclicBarrier;
     private T response;
 
     private String futureName;
 
     public SyncFuture() {
-        countDownLatch=new CountDownLatch(1);
+//        countDownLatch = new CountDownLatch(1);
+        cyclicBarrier = new CyclicBarrier(2);
     }
 
     public SyncFuture(String name) {
-        futureName=name;
+        futureName = name;
         new SyncFuture<>();
     }
 
@@ -36,33 +40,47 @@ public class SyncFuture<T> implements Future<T>,ReuseFuture {
 
     @Override
     public boolean isDone() {
-        return response!=null;
+        return response != null;
     }
 
     @Override
     public T get() throws InterruptedException, ExecutionException {
-        countDownLatch.wait();
+        try {
+            cyclicBarrier.await();
+        } catch (BrokenBarrierException e) {
+            throw new RuntimeException(e);
+        }
         return response;
     }
 
     @Override
-    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        if (countDownLatch.await(timeout, unit)) {
+    public T get(long timeout, TimeUnit unit) {
+        try {
+            cyclicBarrier.await(timeout,unit);
             return response;
+        } catch (BrokenBarrierException | InterruptedException | TimeoutException e) {
+            throw new RuntimeException(e);
         }
-        return null;
     }
+
     @Override
     public void reset() {
-        countDownLatch=new CountDownLatch(1);
+        cyclicBarrier.reset();
     }
 
+    @Override
     public void done() {
-        countDownLatch.countDown();
+        try {
+            cyclicBarrier.await();
+            reset();
+        } catch (Exception e) {
+
+        }
     }
 
+    @Override
     public void doneAndPut(T response) {
-        this.response=response;
+        this.response = response;
         done();
     }
 
@@ -73,5 +91,23 @@ public class SyncFuture<T> implements Future<T>,ReuseFuture {
 
     public String getFutureName() {
         return futureName;
+    }
+
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        SyncFuture<String> stringSyncFuture = new SyncFuture<>();
+
+        new Thread(() -> {
+            System.out.println("已经完成");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            stringSyncFuture.doneAndPut("完成了");
+        }).start();
+
+        System.out.println("等待");
+        String s = stringSyncFuture.get();
+        System.out.println(s);
     }
 }

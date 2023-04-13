@@ -36,14 +36,13 @@ public class UserController {
     public ResultUtil<String> getUserInfo(@IocRequestParam( value="userName") String userName,@IocRequestBody People people){
         System.out.println("------准备获取用户介绍------");
         for (int i = 0; i < 10; i++) {
-            userService.getUserIntroduce(userName);
+            String s=userService.getUserIntroduce(userName);
+            System.out.println("用户信息： "+people.toString());
+            System.out.println("------用户开始介绍 -------");
+            System.out.println(s);
+            System.out.println("--------用户介绍完成--------");
         }
-        String s = userService.getUserIntroduce(userName);
-        System.out.println("用户信息： "+people.toString());
-        System.out.println("------用户开始介绍 -------");
-        System.out.println(s);
-        System.out.println("--------用户介绍完成--------");
-        return ResultUtil.successWithData(s);
+        return ResultUtil.successWithoutData();
     }
 }
 

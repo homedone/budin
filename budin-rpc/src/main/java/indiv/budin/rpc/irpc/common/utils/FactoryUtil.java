@@ -17,19 +17,21 @@ public class FactoryUtil {
     /**
      * concurrentHashMap的话，已经线程安全了，但还需要进行double check,containsKey+put之后线程不安全
      * 所以下面方法是线程不安全的
+     *
      * @param clazz
      * @return
      */
-    public static Object getClassSingletonInstance(Class<?> clazz){
+    public static Object getClassSingletonInstance(Class<?> clazz) {
         String singletonName = clazz.getName();
         try {
             Object obj = singletonMap.getOrDefault(singletonName, singletonMap.put(singletonName, clazz.newInstance()));
             return obj;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
     public static Object getSingletonInstance(Class<?> clazz) {
         String singletonName = clazz.getName();
         if (!singletonMap.containsKey(singletonName)) {
@@ -56,8 +58,7 @@ public class FactoryUtil {
                         Constructor<?> cons = declaredConstructors[0];
                         for (Constructor constructor : declaredConstructors) {
                             int parameterCount = constructor.getParameterCount();
-                            if (parameters.length != parameterCount) continue;
-                            else {
+                            if (parameters.length == parameterCount) {
                                 cons = constructor;
                                 break;
                             }
@@ -77,15 +78,16 @@ public class FactoryUtil {
         for (int i = 0; i < 10; i++) {
             new Thread(() -> {
 //                Cat cat = (Cat) FactoryUtil.getSingletonInstance(Cat.class);
-                Cat cat=(Cat) FactoryUtil.getSingletonInstance(Cat.class);
+                Cat cat = (Cat) FactoryUtil.getSingletonInstance(Cat.class);
                 System.out.println("线程 " + Thread.currentThread().getName() + " 获取了cat对象: " + cat);
-                Dog dog=(Dog) FactoryUtil.getSingletonInstance(Dog.class);
+                Dog dog = (Dog) FactoryUtil.getSingletonInstance(Dog.class);
                 System.out.println("线程 " + Thread.currentThread().getName() + " 获取了dog对象: " + dog);
             }).start();
         }
     }
 }
-class Dog{
+
+class Dog {
 
 }
 
@@ -101,7 +103,35 @@ class Cat {
     String sex;
 
     String introduce() {
-        return "i am a cat, sex is "+this.sex;
+        return "i am a cat, sex is " + this.sex;
+    }
+}
+
+class People<T> {
+    T t;
+    int age;
+
+    public People(int age) {
+        this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setT(T t) {
+        this.t = t;
+    }
+
+    String introduce() {
+        return "i am people " + this.t;
+    }
+
+    public static void main(String[] args) {
+        People<String> people=(People) FactoryUtil.getSingletonInstance(People.class, new Object[]{10});
+        people.setT("hhhh");
+        System.out.println(people.getAge());
+        System.out.println(people.introduce());
     }
 }
 

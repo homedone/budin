@@ -22,7 +22,7 @@ public class SyncFuturePool<T> implements FuturePool<T> {
 
     private final int cap;
 
-    private final Queue<Future<T>> blockingQueue;
+    private final Queue<ReuseFuture<T>> blockingQueue;
 
     private final ReentrantLock reentrantLock;
 
@@ -35,7 +35,7 @@ public class SyncFuturePool<T> implements FuturePool<T> {
     }
 
     @Override
-    public Future<T> obtain() {
+    public ReuseFuture<T> obtain() {
         while (count.get()==cap && queueSize.get()==0){}
         reentrantLock.lock();
         if (count.get()<cap){
@@ -43,7 +43,7 @@ public class SyncFuturePool<T> implements FuturePool<T> {
             queueSize.incrementAndGet();
             count.incrementAndGet();
         }
-        Future<T> poll = blockingQueue.poll();
+        ReuseFuture<T> poll = blockingQueue.poll();
         queueSize.decrementAndGet();
 //        System.out.println( " borrow "+" ， rest count is "+freeSize()+"， all count is "+size());
         reentrantLock.unlock();
@@ -55,7 +55,7 @@ public class SyncFuturePool<T> implements FuturePool<T> {
      * @param future
      */
     @Override
-    public void free(Future<T> future) {
+    public void free(ReuseFuture<T> future) {
         blockingQueue.offer(future);
         int i = queueSize.incrementAndGet();
 //        System.out.println( " give back "+" ，rest count is "+i+"， all count is "+size());
@@ -77,7 +77,9 @@ public class SyncFuturePool<T> implements FuturePool<T> {
         for (int i = 0; i < 20; i++) {
             Thread t = new Thread(() -> {
                 try {
-                    Future<String> future = stringSyncFuturePool.obtain();
+                    ReuseFuture<String> future = stringSyncFuturePool.obtain();
+                    future.doneAndPut("ok");
+                    Thread.sleep(200);
                     String s = Thread.currentThread().getName();
                     stringSyncFuturePool.free(future);
                 } catch (Exception e) {

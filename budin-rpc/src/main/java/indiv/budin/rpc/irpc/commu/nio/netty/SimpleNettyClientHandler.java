@@ -4,6 +4,7 @@ import indiv.budin.rpc.irpc.carrier.RpcMessage;
 import indiv.budin.rpc.irpc.carrier.RpcRequest;
 import indiv.budin.rpc.irpc.carrier.RpcResponse;
 import indiv.budin.rpc.irpc.common.concurent.FutureMap;
+import indiv.budin.rpc.irpc.common.concurent.ReuseFuture;
 import indiv.budin.rpc.irpc.common.concurent.SyncFuture;
 import indiv.budin.rpc.irpc.common.constants.MessageType;
 import indiv.budin.rpc.irpc.common.utils.FactoryUtil;
@@ -46,12 +47,13 @@ public class SimpleNettyClientHandler extends SimpleChannelInboundHandler<RpcMes
         if (rpcMessage.getMessageType() == MessageType.RESPONSE.getType()) {
             RpcResponse response = (RpcResponse) rpcMessage.getData();
             channelHandlerContext.writeAndFlush(response);
-            SyncFuture<Object> rpcResponseFuture = futureMap.get(response.getMessageId());
+            ReuseFuture<Object> rpcResponseFuture = futureMap.get(response.getMessageId());
             if (response.isStatus()) {
                 rpcResponseFuture.doneAndPut(response.getData());
             } else {
                 rpcResponseFuture.done();
             }
+
         }
     }
 
