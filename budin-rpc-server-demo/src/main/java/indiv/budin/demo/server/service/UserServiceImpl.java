@@ -15,17 +15,26 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2022/11/16 19 08
  * discription
  */
-@RpcService(serviceName = "indiv.budin.demo.server.service.UserService",version = "1.0",node = "1.0")
+@RpcService(serviceName = "indiv.budin.demo.server.service.UserService", version = "1.0", node = "1.0")
 @IocService
 public class UserServiceImpl implements UserService {
 
-    private static final Map<String, User> users=new ConcurrentHashMap<>();
+    private static final Map<String, User> users = new ConcurrentHashMap<>();
+
     static {
-        User user=new User();
-        user.setUserName("dxq");
-        user.setAddress(" Beijing");
-        users.put("dxq",user);
+//        User user=new User();
+//        user.setUserName("dxq");
+//        user.setAddress(" Beijing");
+//        users.put("dxq",user);
+        String[] address = new String[]{"Beijing", "Shanghai", "shenzhen", "guangzhou", "hangzhou"};
+        for (int i = 0; i < 100; i++) {
+            User user = new User();
+            user.setUserName("name-" + i);
+            user.setAddress(address[i % 5]);
+            users.put("name-" + i, user);
+        }
     }
+
     @Override
     public User getUser(String userName) {
         if (!users.containsKey(userName)) return null;
@@ -35,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void addUser(User user) {
         System.out.println(user.getUserName());
-        users.put(user.getUserName(),user);
+        users.put(user.getUserName(), user);
     }
 
     @Override
@@ -43,6 +52,7 @@ public class UserServiceImpl implements UserService {
         if (!users.containsKey(userName)) return;
         users.remove(userName);
     }
+
     @Override
     public String getUserIntroduce(String userName) {
         if (!users.containsKey(userName)) return null;

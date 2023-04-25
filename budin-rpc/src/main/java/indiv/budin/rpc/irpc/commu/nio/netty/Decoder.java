@@ -78,8 +78,10 @@ public class Decoder extends LengthFieldBasedFrameDecoder {
             BaseSerializer baseSerializer = SerializerUtil.getSerializer(serializerType);
             Class<?> messageClass = MessageUtil.getMessageClass(messageType);
             try {
-                byte[] decompress = CompressionUtil.decompress(data);
-                Object obj = baseSerializer.deserialize(decompress, messageClass);
+                // 怀疑是压缩解压缩的问题？
+//                byte[] decompress = CompressionUtil.decompress(data);
+//                Object obj = baseSerializer.deserialize(decompress, messageClass);
+                Object obj = baseSerializer.deserialize(data, messageClass);
                 if (messageType == MessageType.REQUEST.getType()) {
                     RpcRequest request = (RpcRequest) obj;
                     rpcMessage.setData(request);

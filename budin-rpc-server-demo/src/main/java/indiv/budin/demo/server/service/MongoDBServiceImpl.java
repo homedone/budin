@@ -19,8 +19,8 @@ import java.util.List;
  * discription
  */
 @Slf4j
-@IocService
-@RpcService(serviceName = "indiv.budin.demo.server.api.MongoDBService")
+//@IocService
+//@RpcService(serviceName = "indiv.budin.demo.server.api.MongoDBService")
 public class MongoDBServiceImpl implements MongoDBService {
     BudinSubscriber<Object> budinSubscriber = new BudinSubscriber<>(100);
 

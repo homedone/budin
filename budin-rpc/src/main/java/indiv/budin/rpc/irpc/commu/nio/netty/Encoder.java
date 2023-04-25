@@ -20,6 +20,7 @@ public class Encoder extends MessageToByteEncoder {
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, Object o, ByteBuf byteBuf) throws Exception {
         if (o instanceof RpcMessage) {
+//            System.out.println("index "+byteBuf.writerIndex());
             RpcMessage rpcMessage = (RpcMessage) o;
             byteBuf.writeBytes(MessageCode.MAGIC);
             byteBuf.writeBytes(new byte[]{MessageCode.VERSION});
@@ -27,7 +28,7 @@ public class Encoder extends MessageToByteEncoder {
             byteBuf.writeBytes(new byte[]{rpcMessage.getMessageType()});
             byteBuf.writeBytes(new byte[]{rpcMessage.getSerializerType()});
             byteBuf.writeInt(rpcMessage.getMessageId());
-            int bodyLen=0;
+            int bodyLen = 0;
             if (rpcMessage.getMessageType() == MessageType.REQUEST.getType()
                     || rpcMessage.getMessageType() == MessageType.RESPONSE.getType()) {
                 BaseSerializer serializer = SerializerUtil.getSerializer(rpcMessage.getSerializerType());
@@ -35,13 +36,15 @@ public class Encoder extends MessageToByteEncoder {
                     throw new EncoderException("Serializer not be find");
                 }
                 byte[] serialize = serializer.serialize(rpcMessage.getData());
-                byte[] compress = CompressionUtil.compress(serialize);
-                byteBuf.writeBytes(compress);
-                bodyLen=compress.length;
+//                byte[] compress = CompressionUtil.compress(serialize);
+//                byteBuf.writeBytes(compress);
+//                bodyLen=compress.length;
+                byteBuf.writeBytes(serialize);
+                bodyLen = serialize.length;
             }
             int pos = byteBuf.writerIndex();
-            byteBuf.writerIndex(MessageCode.MAGIC_LEN+MessageCode.VERSION_LEN);
-            byteBuf.writeInt(MessageCode.HEAD_LEN+bodyLen);
+            byteBuf.writerIndex(MessageCode.MAGIC_LEN + MessageCode.VERSION_LEN);
+            byteBuf.writeInt(MessageCode.HEAD_LEN + bodyLen);
             byteBuf.writerIndex(pos);
         }
     }

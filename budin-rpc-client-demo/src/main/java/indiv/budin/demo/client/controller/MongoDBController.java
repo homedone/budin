@@ -17,7 +17,7 @@ import java.util.List;
  * @date 2023/2/27 19 13
  * discription
  */
-@IocController
+//@IocController
 public class MongoDBController {
     Logger logger=LoggerFactory.getLogger(MongoDBController.class);
     @RpcAutowire(serviceName = "indiv.budin.demo.server.api.MongoDBService")

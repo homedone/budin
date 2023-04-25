@@ -4,7 +4,7 @@ public enum MessageType {
 
     REQUEST((byte) 1,"REQUEST"),
     RESPONSE((byte) 2,"RESPONSE"),
-    BOUNCE((byte) 3,"BOUSE");
+    BOUNCE((byte) 3,"BOUNCE");
     byte type;
 
     String description;

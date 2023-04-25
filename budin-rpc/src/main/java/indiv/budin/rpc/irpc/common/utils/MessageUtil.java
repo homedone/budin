@@ -11,7 +11,11 @@ public class MessageUtil {
             return RpcRequest.class;
         }else if(MessageType.RESPONSE.getType()==b){
             return RpcResponse.class;
-        }else return null;
+        }else if (MessageType.BOUNCE.getType()==b){
+            return RpcRequest.class;
+        }else{
+            return null;
+        }
     }
 
 }
