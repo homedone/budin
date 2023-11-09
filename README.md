@@ -1,6 +1,6 @@
 # budin ![logo](budin-mini.png)
 
-本项目是一个基于 Netty 的简易 RPC 框架项目(Netty + Nacos + Kyro / Hession)，作者是个技术菜鸟，本项目是作者学习IOC、AOP与RPC过程中，从别的地方东拼西凑，然后改出来的，供有兴趣的朋友参考。  
+本项目是一个基于 Netty 的简易 RPC 框架项目(Netty + Nacos + Kyro / Hessian)，作者是个技术菜鸟，本项目是作者学习IOC、AOP与RPC过程中，从别的地方东拼西凑，然后改出来的，供有兴趣的朋友参考。  
 如果想学习RPC的话，还是推荐直接看
 [guide-rpc-framework](https://github.com/Snailclimb/guide-rpc-framework) 和 [Dubbo](https://github.com/apache/dubbo)
 
